@@ -107,12 +107,12 @@ res <- bench::mark(
 
 | expression                                        |  median | itr/sec | GB/s |
 | :------------------------------------------------ | ------: | ------: | ---: |
-| xxhash32(vec)                                     | 159.3µs |    6004 |  5.8 |
-| xxhash64(vec)                                     |  82.1µs |   11507 | 11.3 |
-| xxhash128(vec)                                    |  34.3µs |   26889 | 27.2 |
-| xxh3\_64bits(vec)                                 |  32.3µs |   28262 | 28.9 |
-| digest(vec, algo = “xxhash32”, serialize = FALSE) | 317.7µs |    3053 |  2.9 |
-| digest(vec, algo = “xxhash64”, serialize = FALSE) |   116µs |    8032 |  8.0 |
+| xxhash32(vec)                                     | 168.9µs |    5557 |  5.5 |
+| xxhash64(vec)                                     |  83.4µs |   11367 | 11.2 |
+| xxhash128(vec)                                    |  35.1µs |   25999 | 26.5 |
+| xxh3\_64bits(vec)                                 |  32.6µs |   27884 | 28.6 |
+| digest(vec, algo = “xxhash32”, serialize = FALSE) | 319.9µs |    3018 |  2.9 |
+| digest(vec, algo = “xxhash64”, serialize = FALSE) | 113.5µs |    8317 |  8.2 |
 
 Hashing 1 million raw bytes
 
@@ -146,12 +146,12 @@ res <- bench::mark(
 
 | expression                                        |  median | itr/sec |  GB/s |
 | :------------------------------------------------ | ------: | ------: | ----: |
-| xxhash32(vec)                                     |   1.2µs |  755361 | 0.793 |
-| xxhash64(vec)                                     |  1.05µs |  809863 | 0.912 |
-| xxhash128(vec)                                    |  1.24µs |  746680 | 0.772 |
-| xxh3\_64bits(vec)                                 |   985ns |  897075 | 0.968 |
-| digest(vec, algo = “xxhash32”, serialize = FALSE) | 32.34µs |   28355 | 0.029 |
-| digest(vec, algo = “xxhash64”, serialize = FALSE) | 32.62µs |   28529 | 0.029 |
+| xxhash32(vec)                                     |  1.17µs |  776164 | 0.814 |
+| xxhash64(vec)                                     |  1.06µs |  816297 | 0.903 |
+| xxhash128(vec)                                    |  1.09µs |  855641 | 0.873 |
+| xxh3\_64bits(vec)                                 |  1.02µs |  886907 | 0.933 |
+| digest(vec, algo = “xxhash32”, serialize = FALSE) | 31.69µs |   29108 | 0.030 |
+| digest(vec, algo = “xxhash64”, serialize = FALSE) | 31.42µs |   29164 | 0.030 |
 
 Hashing 1000 raw bytes
 
@@ -187,12 +187,12 @@ res <- bench::mark(
 
 | expression                                       |   median | itr/sec | GB/s |
 | :----------------------------------------------- | -------: | ------: | ---: |
-| xxhash32(vec)                                    |   1.35ms |     699 |  5.5 |
-| xxhash64(vec)                                    | 715.37µs |    1287 | 10.4 |
-| xxhash128(vec)                                   | 329.09µs |    2589 | 22.6 |
-| xxh3\_64bits(vec)                                | 323.37µs |    2573 | 23.0 |
-| digest(vec, algo = “xxhash32”, serialize = TRUE) |  33.39ms |      30 |  0.2 |
-| digest(vec, algo = “xxhash64”, serialize = TRUE) |  32.06ms |      31 |  0.2 |
+| xxhash32(vec)                                    |   1.37ms |     689 |  5.4 |
+| xxhash64(vec)                                    | 727.09µs |    1261 | 10.2 |
+| xxhash128(vec)                                   | 369.55µs |    2318 | 20.2 |
+| xxh3\_64bits(vec)                                | 363.57µs |    2372 | 20.5 |
+| digest(vec, algo = “xxhash32”, serialize = TRUE) |  33.29ms |      29 |  0.2 |
+| digest(vec, algo = “xxhash64”, serialize = TRUE) |  32.28ms |      31 |  0.2 |
 
 Hashing 1 million numeric values
 
@@ -235,24 +235,24 @@ res <- bench::mark(
 
 | expression                                       |  median | itr/sec | GB/s |
 | :----------------------------------------------- | ------: | ------: | ---: |
-| xxhash32(vec)                                    | 675.6µs |    1436 |  5.5 |
-| xxhash64(vec)                                    | 338.4µs |    2810 | 11.0 |
-| xxhash128(vec)                                   | 143.7µs |    6399 | 25.9 |
-| xxh3\_64bits(vec)                                | 137.6µs |    6775 | 27.1 |
-| digest(vec, algo = “xxhash32”, serialize = TRUE) |  12.7ms |      76 |  0.3 |
-| digest(vec, algo = “xxhash64”, serialize = TRUE) |  11.5ms |      84 |  0.3 |
-| murmur3.32(vec)                                  | 587.3µs |    1417 |  6.3 |
-| cityhash.64(vec)                                 | 637.1µs |     948 |  5.8 |
-| spooky.32(vec)                                   | 642.2µs |     957 |  5.8 |
+| xxhash32(vec)                                    | 659.5µs |    1474 |  5.6 |
+| xxhash64(vec)                                    | 333.9µs |    2847 | 11.2 |
+| xxhash128(vec)                                   | 140.5µs |    6505 | 26.5 |
+| xxh3\_64bits(vec)                                | 134.2µs |    6501 | 27.8 |
+| digest(vec, algo = “xxhash32”, serialize = TRUE) |  13.6ms |      71 |  0.3 |
+| digest(vec, algo = “xxhash64”, serialize = TRUE) |  11.9ms |      79 |  0.3 |
+| murmur3.32(vec)                                  | 572.8µs |    1460 |  6.5 |
+| cityhash.64(vec)                                 | 629.3µs |     934 |  5.9 |
+| spooky.32(vec)                                   |   622µs |    1085 |  6.0 |
 
 Hashing 1 million integer values
 
 ## Related Software
 
   - The original [xxHash](https://cyan4973.github.io/xxHash/) software.
-  - The [`digest`](https://cran.r-project.org/package=digest) digest
-    package is a much more comprehensive approach to hashing from within
-    R - multiple hashing functions and much more configurability
+  - The [`digest`](https://cran.r-project.org/package=digest) package is
+    a much more comprehensive approach to hashing from within R -
+    multiple hashing functions and much more configurability
   - The
     [`hashFunction`](https://cran.r-project.org/package=hashFunction)
     offers some hasing functions that work directly on character or

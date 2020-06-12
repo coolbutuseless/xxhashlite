@@ -249,7 +249,7 @@ res %>%
 ## Related Software
 
 * The original [xxHash](https://cyan4973.github.io/xxHash/) software.
-* The [`digest`](https://cran.r-project.org/package=digest) digest package is 
+* The [`digest`](https://cran.r-project.org/package=digest) package is 
   a much more comprehensive approach to hashing from within R - multiple 
   hashing functions and much more configurability
 * The [`hashFunction`](https://cran.r-project.org/package=hashFunction) offers 
