@@ -71,7 +71,7 @@ ref_lgl <- list(
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Test that xxhashr::funcs match the command line output
+# Test that xxhashlite::funcs match the command line output
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 test_that("Same hashes in R and from xxHash command line (xxhsum)", {
 

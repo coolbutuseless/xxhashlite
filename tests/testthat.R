@@ -1,4 +1,4 @@
 library(testthat)
-library(xxhashr)
+library(xxhashlite)
 
-test_check("xxhashr")
+test_check("xxhashlite")

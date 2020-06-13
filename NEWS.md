@@ -1,3 +1,3 @@
-# xxhashr 0.1.0
+# xxhashlite 0.1.0
 
 * Initial release.

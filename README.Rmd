@@ -13,22 +13,25 @@ knitr::opts_chunk$set(
 )
 
 library(dplyr)
-library(xxhashr)
+library(xxhashlite)
 ```
 
-# xxhashr
+# xxhashlite
 
 <!-- badges: start -->
 ![](https://img.shields.io/badge/cool-useless-green.svg)
 <!-- badges: end -->
 
-`xxhashr` provides simple access to the *very* fast hashing functions
-in [xxHash](https://cyan4973.github.io/xxHash/).  
+`xxhashlite` provides simple access to the *very* fast hashing functions
+in [xxHash](https://cyan4973.github.io/xxHash/) for in-memory hashing 
+of R atomic, numeric vectors.
 
 The package provides support for hashing of vectors, matrices and arrays
 which contain raw, integer, real or logical values.  To hash arbitrary R 
 objects, use `base::serialize()` to first turn the object into 
 a vector of raw bytes.
+
+Currently xxHash code provided with this package is v0.7.3
 
 ### Limitations
 
@@ -46,11 +49,11 @@ a vector of raw bytes.
 
 ## Installation
 
-You can install from [GitHub](https://github.com/coolbutuseless/xxhashr) with:
+You can install from [GitHub](https://github.com/coolbutuseless/xxhashlite) with:
 
 ``` r
 # install.package('remotes')
-remotes::install_github('coolbutuseless/xxhashr)
+remotes::install_github('coolbutuseless/xxhashlite)
 ```
 
 #### Optimisation via `Makevars`
@@ -68,33 +71,49 @@ Here are 2 possible ways to do this:
 
 ## Simple hashing
 
+Four hash functions from xxHash's "simple api" are exposed:
+
+* **xxhash32** - 32 bit output. Will be slow on a 64bit machine.
+* **xxhash64** - 64 bit output. About 2x faster than xxhash32
+* **xxhash128** - 128 bit output. Still marked as experimental in xxHash
+* **xxh3** - 64 bit output. Still marked as experimental in xxHash
+
+
 ```{r example}
-library(xxhashr)
+library(xxhashlite)
 
 vec <- raw(1e6)
 
-xxhashr::xxhash32(vec)
+xxhashlite::xxhash32(vec)
 
-xxhashr::xxhash64(vec)
+xxhashlite::xxhash64(vec)
 
-xxhashr::xxhash128(vec)
+xxhashlite::xxhash128(vec)
 
-xxhashr::xxh3_64bits(vec)
+xxhashlite::xxh3_64bits(vec)
 ```
 
 
 ## Hashing 1 million raw bytes
 
-`xxhashr::xxh3_64bits()` hashes data at around 25 GB/s for this input data size.
+`xxhashlite::xxh3_64bits()` hashes data at around 25 GB/s for this input data size.
 
-Since `digest::digest()` can hash raw bytes like `xxhashr` the speeds for `xxhashr::xxhash64()`
+Since `digest::digest()` can hash raw bytes like `xxhashlite` the speeds for `xxhashlite::xxhash64()`
 and `digest(algo = 'xxhash64')` are about the same.
+
+There are some cryptographic hashes (from `blake3` and `openssl`) included in this 
+benchmark.  These are *cryptographic* hashes, so this isn't really a fair 
+comparison, but for those familiar with those hashes it's a good yardstick by 
+which to measure the performace of `xxHash`
 
 <details>
 <summary> Click here to show/hide benchmark code </summary>
 
 ```{r bench1}
 library(digest)
+library(blake3)
+library(openssl)
+library(fastdigest)
 
 N   <- 1e6
 vec <- raw(N)
@@ -104,8 +123,16 @@ res <- bench::mark(
   xxhash64(vec),
   xxhash128(vec),
   xxh3_64bits(vec),
+  blake3_hash_raw(vec),
+  sha1(vec),
+  sha2(vec),
+  sha224(vec),
+  sha256(vec),
+  sha384(vec),
+  sha512(vec),
   digest(vec, algo = 'xxhash32', serialize = FALSE),
   digest(vec, algo = 'xxhash64', serialize = FALSE),
+  fastdigest(vec),
   check = FALSE
 )
 ```
@@ -118,6 +145,14 @@ res %>%
   mutate(`GB/s` = round(N/1024^3 / as.numeric(median), 1)) %>%
   mutate(`itr/sec` = round(`itr/sec`)) %>%
   select(expression, median, `itr/sec`, `GB/s`) %>%
+  mutate(package = c(
+    rep('xxhashlite', 4),
+    'blake3',
+    rep('openssl', 6),
+    rep('digest', 2),
+    'fastdigest'
+  )) %>%
+  select(package, everything()) %>%
   knitr::kable(caption = "Hashing 1 million raw bytes")
 ```
 
@@ -128,7 +163,7 @@ res %>%
 At smaller data sizes, the call overhead becomes more significant, and the 
 overall throughput drops drastically.
 
-`xxhashr` is about 20x faster than `digest::digest()` in this case.
+`xxhashlite` is about 20x faster than `digest::digest()` in this case.
 
 <details>
 <summary> Click here to show/hide benchmark code </summary>
@@ -144,6 +179,7 @@ res <- bench::mark(
   xxh3_64bits(vec),
   digest(vec, algo = 'xxhash32', serialize = FALSE),
   digest(vec, algo = 'xxhash64', serialize = FALSE),
+  fastdigest(vec),
   check = FALSE
 )
 ```
@@ -156,17 +192,23 @@ res %>%
   mutate(`GB/s` = round(N/1024^3 / as.numeric(median), 3)) %>%
   mutate(`itr/sec` = round(`itr/sec`)) %>%
   select(expression, median, `itr/sec`, `GB/s`) %>%
+  mutate(package = c(
+    rep('xxhashlite', 4),
+    rep('digest', 2),
+    'fastdigest'
+  )) %>%
+  select(package, everything()) %>%
   knitr::kable(caption = "Hashing 1000 raw bytes")
 ```
 
 
 ## Hashing 1 million numeric values
 
-In the case of integers, doubles and logical values, `xxhashr` will hash the
+In the case of integers, doubles and logical values, `xxhashlite` will hash the
 data values directly, while `digest::digest()` must first serialize them to 
 raw bytes.
 
-As a result, `xxhashr::xxhash128()` is about 100x faster than `digest::digest()`, 
+As a result, `xxhashlite::xxhash128()` is about 100x faster than `digest::digest()`, 
 and operates at about 20 GB/s (on my machine).
 
 <details>
@@ -185,6 +227,7 @@ res <- bench::mark(
   xxh3_64bits(vec),
   digest(vec, algo = 'xxhash32', serialize = TRUE),
   digest(vec, algo = 'xxhash64', serialize = TRUE),
+  fastdigest(vec),
   check = FALSE
 )
 ```
@@ -196,19 +239,25 @@ res %>%
   mutate(`GB/s` = round(N*8/1024^3 / as.numeric(median), 1)) %>%
   mutate(`itr/sec` = round(`itr/sec`)) %>%
   select(expression, median, `itr/sec`, `GB/s`) %>%
+  mutate(package = c(
+    rep('xxhashlite', 4),
+    rep('digest', 2),
+    'fastdigest'
+  )) %>%
+  select(package, everything()) %>%
   knitr::kable(caption = "Hashing 1 million numeric values")
 ```
 
 
 ## Hashing 1 million integer values
 
-In the case of integers, doubles and logical values, `xxhashr` will hash the
+In the case of integers, doubles and logical values, `xxhashlite` will hash the
 data values directly, while `digest::digest()` must first serialize them to 
 raw bytes.
 
 The `hashFunction` package offers a few hashes that work directly with integer values.
 
-`xxhashr::xxhash128()` is about 100x faster than `digest::digest()`, and about
+`xxhashlite::xxhash128()` is about 100x faster than `digest::digest()`, and about
 5x faster than `hashFunction` hashes.
 
 <details>
@@ -227,6 +276,7 @@ res <- bench::mark(
   xxh3_64bits(vec),
   digest(vec, algo = 'xxhash32', serialize = TRUE),
   digest(vec, algo = 'xxhash64', serialize = TRUE),
+  fastdigest(vec),
   murmur3.32(vec),
   cityhash.64(vec),
   spooky.32(vec),
@@ -241,6 +291,13 @@ res %>%
   mutate(`GB/s` = round(N*4/1024^3 / as.numeric(median), 1)) %>%
   mutate(`itr/sec` = round(`itr/sec`)) %>%
   select(expression, median, `itr/sec`, `GB/s`) %>%
+  mutate(package = c(
+    rep('xxhashlite', 4),
+    rep('digest', 2),
+    'fastdigest',
+    rep('hashFunction', 3)
+  )) %>%
+  select(package, everything()) %>%
   knitr::kable(caption = "Hashing 1 million integer values")
 ```
 
@@ -252,9 +309,11 @@ res %>%
 * The [`digest`](https://cran.r-project.org/package=digest) package is 
   a much more comprehensive approach to hashing from within R - multiple 
   hashing functions and much more configurability
-* The [`hashFunction`](https://cran.r-project.org/package=hashFunction) offers 
+* The [`hashFunction`](https://cran.r-project.org/package=hashFunction) package offers 
   some hasing functions that work directly on character or integer values.
-
+* The [`fastdigest`](https://cran.r-project.org/package=fastdigest) offers
+  the fast non-cryptographic 'SpookyHash' and will hash anything that
+  serialize knows about.
 
 ## Acknowledgements
 

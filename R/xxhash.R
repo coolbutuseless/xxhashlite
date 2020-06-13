@@ -1,17 +1,17 @@
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Calculate hash of the given numeric, integer or logical vector using \code{xxHash}
+#' Calculate hash of the given raw, numeric, integer or logical vector using \code{xxHash}
 #'
 #' Vectors, matrices and arrays which contain the same data will hash to the same
 #' value regardless of dimensions.
 #'
-#' @param vec vector of real, integer or logical values
+#' @param vec vector of raw, real, integer or logical values
 #'
-#' @useDynLib xxhashr xxhash64_
-#' @useDynLib xxhashr xxhash32_
-#' @useDynLib xxhashr xxhash128_
-#' @useDynLib xxhashr xxh3_64bits_
+#' @useDynLib xxhashlite xxhash64_
+#' @useDynLib xxhashlite xxhash32_
+#' @useDynLib xxhashlite xxhash128_
+#' @useDynLib xxhashlite xxh3_64bits_
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 xxhash64 <- function(vec) {

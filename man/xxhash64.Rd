@@ -5,7 +5,7 @@
 \alias{xxhash32}
 \alias{xxhash128}
 \alias{xxh3_64bits}
-\title{Calculate hash of the given numeric, integer or logical vector using \code{xxHash}}
+\title{Calculate hash of the given raw, numeric, integer or logical vector using \code{xxHash}}
 \usage{
 xxhash64(vec)
 
@@ -16,7 +16,7 @@ xxhash128(vec)
 xxh3_64bits(vec)
 }
 \arguments{
-\item{vec}{vector of real, integer or logical values}
+\item{vec}{vector of raw, real, integer or logical values}
 }
 \description{
 Vectors, matrices and arrays which contain the same data will hash to the same
