@@ -5,7 +5,7 @@
 \alias{xxhash32}
 \alias{xxhash128}
 \alias{xxh3_64bits}
-\title{Calculate hash of the given raw, numeric, integer or logical vector using \code{xxHash}}
+\title{Calculate hash of the data in a raw, numeric, integer or logical vector using \code{xxHash}}
 \usage{
 xxhash64(vec)
 
@@ -16,9 +16,14 @@ xxhash128(vec)
 xxh3_64bits(vec)
 }
 \arguments{
-\item{vec}{vector of raw, real, integer or logical values}
+\item{vec}{vector, matrix or array of raw, real, integer or logical values}
 }
 \description{
+This function will calculate
+the hash on the data payload within a raw, integer, numeric or logical vector.
+It disregards dimensions and other attributes.
+}
+\details{
 Vectors, matrices and arrays which contain the same data will hash to the same
-value regardless of dimensions.
+value regardless of dimensions or attributes.
 }
