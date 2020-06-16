@@ -23,12 +23,20 @@ Currently xxHash code provided with this package is v0.7.3. See
 `LICENSE-xxHash` for the copyright and licensing information for that
 code.
 
+### Design choices
+
+  - `xxhashlite` will hash the *data payload* within an object, and not
+    the R object itself. This means that hashes calculated within R will
+    match hashes calculated on the equivalent data in a file hashed by
+    the command line programs provided with `xxHash`.
+
 ### Limitations
 
-  - It is the underlying data of the vector or matrix that is being
-    hashed, and this does not include any notion of the container for
-    that data. This means that a vector and array which contain the same
-    data will hash to the same value - regardless of the dimensions.
+  - As it is the *data payload* of the vector or matrix that is being
+    hashed, this does not include any notion of the container for that
+    data. This means that a vector and array which contain the same data
+    will hash to the same value - regardless of the dimensions or other
+    attributes.
   - `xxHash v0.7.x` includes the experimental `xxh3` and `xxh128` hash
     functions. From the documentation: “The algorithm is currently in
     development, meaning its return values might still change in future
@@ -47,7 +55,7 @@ You can install from
 remotes::install_github('coolbutuseless/xxhashlite)
 ```
 
-#### Optimisation via `Makevars`
+#### Installation - set CFLAGs for optimised executable
 
 To get the most out of what `xxHash` offers, it will be important to set
 some optimization flags for your machine. The important compiler flags
@@ -151,10 +159,10 @@ res <- bench::mark(
 
 | package    | expression        |  median | itr/sec | GB/s |
 | :--------- | :---------------- | ------: | ------: | ---: |
-| xxhashlite | xxhash32(vec)     | 163.4µs |    5858 |  5.7 |
-| xxhashlite | xxhash64(vec)     |  84.4µs |   11326 | 11.0 |
-| xxhashlite | xxhash128(vec)    |  35.2µs |   26166 | 26.4 |
-| xxhashlite | xxh3\_64bits(vec) |  32.8µs |   27774 | 28.4 |
+| xxhashlite | xxhash32(vec)     | 158.5µs |    6023 |  5.9 |
+| xxhashlite | xxhash64(vec)     |  81.4µs |   11748 | 11.4 |
+| xxhashlite | xxhash128(vec)    |  34.8µs |   26404 | 26.8 |
+| xxhashlite | xxh3\_64bits(vec) |  32.5µs |   28540 | 28.7 |
 
 Hashing 1 million raw bytes
 

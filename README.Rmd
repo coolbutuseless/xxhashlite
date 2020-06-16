@@ -33,17 +33,24 @@ If you wanted to hash arbitrary R objects, you could first turn it
 into a raw vector representation
 using `base::serialize()`. 
 
-
 Currently xxHash code provided with this package is v0.7.3.  See `LICENSE-xxHash`
 for the copyright and licensing information for that code.
 
+
+### Design choices
+
+* `xxhashlite` will hash the *data payload* within an object, and not the R 
+  object itself.  This means that hashes calculated within R will match 
+  hashes calculated on the equivalent data in a file hashed by the command 
+  line programs provided with `xxHash`.
+
 ### Limitations
 
-* It is the underlying data of the vector or 
-  matrix that is being hashed, and this
+* As it is the *data payload* of the vector or 
+  matrix that is being hashed, this
   does not include any notion of the container for that data.  This
   means that a vector and array which contain the same data will hash to the 
-  same value - regardless of the dimensions.
+  same value - regardless of the dimensions or other attributes.
 * `xxHash v0.7.x` includes the experimental `xxh3` and `xxh128` hash functions.
    From the documentation: "The algorithm is currently in development, meaning 
    its return values might still change in future versions. However, the API is 
