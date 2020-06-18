@@ -1,7 +1,7 @@
 Package: xxhashlite
 Type: Package
 Title: Fast Hashing of Vectors using xxHash
-Version: 0.1.0
+Version: 0.1.1
 Author: mikefc
 Maintainer: mikefc <mikefc@coolbutuseless.com>
 Description: Fast Hashing of raw, integer, real and logical vectors using xxHash.

@@ -31,6 +31,9 @@ SEXP xxhash32_(SEXP buffer_) {
   case RAWSXP:
     hash = XXH32(RAW(buffer_), size, 0);
     break;
+  case CPLXSXP:
+    hash = XXH32(COMPLEX(buffer_), size*16, 0);
+    break;
   default:
     error("xxhash32 cannot handles SEXP type: %i\n", sexp_type);
   }
@@ -65,6 +68,9 @@ case REALSXP:
   break;
 case RAWSXP:
   hash = XXH64(RAW(buffer_), size, 0);
+  break;
+case CPLXSXP:
+  hash = XXH64(COMPLEX(buffer_), size*16, 0);
   break;
 default:
   error("xxhash64 cannot handles SEXP type: %i\n", sexp_type);
@@ -101,6 +107,9 @@ case REALSXP:
 case RAWSXP:
   hash = XXH128(RAW(buffer_), size, 0);
   break;
+case CPLXSXP:
+  hash = XXH128(COMPLEX(buffer_), size*16, 0);
+  break;
 default:
   error("xxhash64 cannot handles SEXP type: %i\n", sexp_type);
 }
@@ -135,6 +144,9 @@ case REALSXP:
   break;
 case RAWSXP:
   hash = XXH3_64bits(RAW(buffer_), size);
+  break;
+case CPLXSXP:
+  hash = XXH3_64bits(COMPLEX(buffer_), size*16);
   break;
 default:
   error("XXH3_64bits cannot handles SEXP type: %i\n", sexp_type);

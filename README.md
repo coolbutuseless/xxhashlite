@@ -13,8 +13,8 @@ functions in [xxHash](https://cyan4973.github.io/xxHash/) for in-memory
 hashing of R atomic, numeric vectors.
 
 The scope of this package is limited - it aims to provide functions for
-direct hashing of vectors, matrices and arrays which contain raw,
-integer, real or logical values.
+direct, in-memory hashing of vectors which contain raw, integer, real,
+complex or logical values.
 
 If you wanted to hash arbitrary R objects, you could first turn it into
 a raw vector representation using `base::serialize()`.
@@ -68,10 +68,11 @@ Here are 2 possible ways to do this:
     (this will change flags for all future compilation, and should
     probably be used with caution)
 
-## Simple hashing of raw, integer, real and logical vectors
+## Simple hashing of raw, integer, real, complex and logical vectors
 
 The supplied functions operate directly on the payload within vectors,
-matrices or arrays containing raw, integer, real or logical values.
+matrices or arrays containing raw, integer, real, complex or logical
+values.
 
 Because these functions operate on the raw data contained in the vector
 and not the R object itself, the attributes and dimensions of the object
@@ -159,10 +160,10 @@ res <- bench::mark(
 
 | package    | expression        |  median | itr/sec | GB/s |
 | :--------- | :---------------- | ------: | ------: | ---: |
-| xxhashlite | xxhash32(vec)     | 158.5µs |    6023 |  5.9 |
-| xxhashlite | xxhash64(vec)     |  81.4µs |   11748 | 11.4 |
-| xxhashlite | xxhash128(vec)    |  34.8µs |   26404 | 26.8 |
-| xxhashlite | xxh3\_64bits(vec) |  32.5µs |   28540 | 28.7 |
+| xxhashlite | xxhash32(vec)     | 164.2µs |    5910 |  5.7 |
+| xxhashlite | xxhash64(vec)     |  79.5µs |   11896 | 11.7 |
+| xxhashlite | xxhash128(vec)    |  34.1µs |   26808 | 27.3 |
+| xxhashlite | xxh3\_64bits(vec) |  32.2µs |   28719 | 28.9 |
 
 Hashing 1 million raw bytes
 
@@ -173,7 +174,7 @@ and other attributes), use `base::serialize()` to convert the object to
 a stream of raw bytes.
 
 ``` r
-xxhash64(serialize(mtcars, NULL))
+xxhash64(base::serialize(mtcars, NULL))
 #> [1] "0d292a85c9449221"
 ```
 

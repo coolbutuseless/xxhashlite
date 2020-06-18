@@ -26,8 +26,8 @@ library(xxhashlite)
 in [xxHash](https://cyan4973.github.io/xxHash/) for in-memory hashing 
 of R atomic, numeric vectors.
 
-The scope of this package is limited - it aims to provide functions for direct hashing of vectors, 
-matrices and arrays which contain raw, integer, real or logical values.  
+The scope of this package is limited - it aims to provide functions for direct,
+in-memory hashing of vectors which contain raw, integer, real, complex or logical values.  
 
 If you wanted to hash arbitrary R objects, you could first turn it 
 into a raw vector representation
@@ -83,10 +83,10 @@ Here are 2 possible ways to do this:
 
 
 
-## Simple hashing of raw, integer, real and logical vectors
+## Simple hashing of raw, integer, real, complex and logical vectors
 
 The supplied functions operate directly on the payload within
-vectors, matrices or arrays containing raw, integer, real or logical values.
+vectors, matrices or arrays containing raw, integer, real, complex or logical values.
 
 Because these functions operate on the raw data contained in the vector and not
 the R object itself, the attributes and dimensions of the object
@@ -184,7 +184,7 @@ use `base::serialize()` to convert the object to a stream of raw bytes.
 
 
 ```{r}
-xxhash64(serialize(mtcars, NULL))
+xxhash64(base::serialize(mtcars, NULL))
 ```
 
 
