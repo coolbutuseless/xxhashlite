@@ -42,31 +42,31 @@ if (FALSE) {
 ref0 <- list(
   xxhash32  = '9430f97f',
   xxhash64  = '87d2a1b6e1163ef1',
-  xxhash128 = 'b811c9319489c8e6d5c5e856f17ac497'
+  xxhash128 = 'b6ef17a3448492b6918780b90550bf34'
 )
 
 ref_raw <- list(
   xxhash32  = 'c4b952f3',
   xxhash64  = '7da1c892ebecf432',
-  xxhash128 = '6af1fb304eef27231f4be0d55a17a31a'
+  xxhash128 = 'e5f44940c7724d0063a020b8fefbb3c9'
 )
 
 ref_dbl <- list(
   xxhash32  = '7e1e0bf2',
   xxhash64  = 'bc684dac194c65a4',
-  xxhash128 = '194e7b1cdb8d9156c6d6d1863ebe6447'
+  xxhash128 = 'a551c561de665f12119b62e86cabea50'
 )
 
 ref_int <- list(
   xxhash32  = 'a1f58821',
   xxhash64  = '2a4e535963d5c229',
-  xxhash128 = 'fc48b80feecedcb118e77d64b09efedb'
+  xxhash128 = 'f25eee26583a56634bd45a7c51679308'
 )
 
 ref_lgl <- list(
   xxhash32  = '863ec8ce',
   xxhash64  = '00016fe6dc9e8615',
-  xxhash128 = '7665bb333cbf0319e119c3dc0f7b112b'
+  xxhash128 = 'ce44a90221a5abe3bcdd968456273c3a'
 )
 
 

@@ -19,7 +19,7 @@ complex or logical values.
 If you wanted to hash arbitrary R objects, you could first turn it into
 a raw vector representation using `base::serialize()`.
 
-Currently xxHash code provided with this package is v0.7.3. See
+Currently code provided with this package is **xxHash v0.8.0**. See
 `LICENSE-xxHash` for the copyright and licensing information for that
 code.
 
@@ -37,12 +37,10 @@ code.
     data. This means that a vector and array which contain the same data
     will hash to the same value - regardless of the dimensions or other
     attributes.
-  - `xxHash v0.7.x` includes the experimental `xxh3` and `xxh128` hash
-    functions. From the documentation: “The algorithm is currently in
-    development, meaning its return values might still change in future
-    versions. However, the API is stable, and can be used in production,
-    typically for generation of ephemeral hashes (produced and consumed
-    in same session)”.
+  - `xxHash v0.8.0` has stabilized the API for `xxh3` and `xxh128` hash
+    functions. While future xxh3 and xxh128 hashes should remain
+    identical for identical data, they will be different from hashes
+    generated in v0.7.x where they were still marked as experimental
   - `xxHash` is a non-cryptographic hash.
 
 ## Installation
@@ -85,11 +83,12 @@ the same value.
 
 Four hash functions from xxHash’s “simple api” are exposed:
 
-  - **xxhash32** - 32 bit output. Will be slow on a 64bit machine.
-  - **xxhash64** - 64 bit output. About 2x faster than xxhash32
-  - **xxhash128** - 128 bit output. **Marked as experimental in xxHash**
-  - **xxh3\_64bits** - 64 bit output. **Marked as experimental in
-    xxHash**
+  - **xxhash32** - 32 bit output
+  - **xxhash64** - 64 bit output
+  - **xxhash128** - 128 bit output. New, fast 128bit hash. Stable as of
+    xxHash v0.8.0.
+  - **xxh3\_64bits** - 64 bit output. New, fast 64bit hash. Stable as of
+    xxHash v0.8.0.
 
 <!-- end list -->
 
@@ -110,14 +109,14 @@ xxhashlite::xxhash64(mat)
 #> [1] "8a76d36d39caaecc"
 
 xxhashlite::xxhash128(vec)
-#> [1] "118fde282639e0a3b5ce7c14a206fb68"
+#> [1] "ef233fc372a159319d648391f361d99a"
 xxhashlite::xxhash128(mat)
-#> [1] "118fde282639e0a3b5ce7c14a206fb68"
+#> [1] "ef233fc372a159319d648391f361d99a"
 
 xxhashlite::xxh3_64bits(vec)
-#> [1] "b5ce7c14a206fb68"
+#> [1] "9d648391f361d99a"
 xxhashlite::xxh3_64bits(mat)
-#> [1] "b5ce7c14a206fb68"
+#> [1] "9d648391f361d99a"
 ```
 
 ## Hashing 1 million raw bytes
@@ -160,10 +159,10 @@ res <- bench::mark(
 
 | package    | expression        |  median | itr/sec | GB/s |
 | :--------- | :---------------- | ------: | ------: | ---: |
-| xxhashlite | xxhash32(vec)     | 164.2µs |    5910 |  5.7 |
-| xxhashlite | xxhash64(vec)     |  79.5µs |   11896 | 11.7 |
-| xxhashlite | xxhash128(vec)    |  34.1µs |   26808 | 27.3 |
-| xxhashlite | xxh3\_64bits(vec) |  32.2µs |   28719 | 28.9 |
+| xxhashlite | xxhash32(vec)     | 154.2µs |    6154 |  6.0 |
+| xxhashlite | xxhash64(vec)     |  79.3µs |   12048 | 11.7 |
+| xxhashlite | xxhash128(vec)    |  33.8µs |   28079 | 27.5 |
+| xxhashlite | xxh3\_64bits(vec) |  33.7µs |   28155 | 27.6 |
 
 Hashing 1 million raw bytes
 
@@ -175,7 +174,7 @@ a stream of raw bytes.
 
 ``` r
 xxhash64(base::serialize(mtcars, NULL))
-#> [1] "0d292a85c9449221"
+#> [1] "64bf7020580dd24d"
 ```
 
 ## Related Software

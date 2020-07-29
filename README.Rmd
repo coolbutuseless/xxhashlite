@@ -33,7 +33,7 @@ If you wanted to hash arbitrary R objects, you could first turn it
 into a raw vector representation
 using `base::serialize()`. 
 
-Currently xxHash code provided with this package is v0.7.3.  See `LICENSE-xxHash`
+Currently code provided with this package is **xxHash v0.8.0**.  See `LICENSE-xxHash`
 for the copyright and licensing information for that code.
 
 
@@ -51,11 +51,10 @@ for the copyright and licensing information for that code.
   does not include any notion of the container for that data.  This
   means that a vector and array which contain the same data will hash to the 
   same value - regardless of the dimensions or other attributes.
-* `xxHash v0.7.x` includes the experimental `xxh3` and `xxh128` hash functions.
-   From the documentation: "The algorithm is currently in development, meaning 
-   its return values might still change in future versions. However, the API is 
-   stable, and can be used in production, typically for generation of 
-   ephemeral hashes (produced and consumed in same session)".
+* `xxHash v0.8.0` has stabilized the API for `xxh3` and `xxh128` hash functions.
+   While future xxh3 and xxh128 hashes should remain identical for identical data,
+   they will be different from hashes generated in v0.7.x where they were
+   still marked as experimental
 * `xxHash` is a non-cryptographic hash.
 
 
@@ -98,10 +97,10 @@ same underlying values, but different dimensions, will hash to the same value.
 
 Four hash functions from xxHash's "simple api" are exposed:
 
-* **xxhash32** - 32 bit output. Will be slow on a 64bit machine.
-* **xxhash64** - 64 bit output. About 2x faster than xxhash32
-* **xxhash128** - 128 bit output. **Marked as experimental in xxHash**
-* **xxh3_64bits** - 64 bit output. **Marked as experimental in xxHash**
+* **xxhash32** - 32 bit output
+* **xxhash64** - 64 bit output
+* **xxhash128** - 128 bit output. New, fast 128bit hash. Stable as of xxHash v0.8.0.
+* **xxh3_64bits** - 64 bit output. New, fast 64bit hash. Stable as of xxHash v0.8.0.
 
 
 
