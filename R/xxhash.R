@@ -1,47 +1,55 @@
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' Calculate hash of the data in a raw, numeric, integer or logical vector using \code{xxHash}
+#' Calculate the hash of the numeric data within an atomic vector.
 #'
-#' This function will calculate
-#' the hash on the data payload within a raw, integer, numeric or logical vector.
-#' It disregards dimensions and other attributes.
+#' This function calculates the hash of only the data within an atomic vector, and
+#' ignores all attributes (including dimensions).  By working in this way, it
+#' avoids having to serialize the vector into raw bytes, and thus gains a speed
+#' advantage.
 #'
-#' Vectors, matrices and arrays which contain the same data will hash to the same
-#' value regardless of dimensions or attributes.
+#' The limitation of this method is that the same data in a vector will hash
+#' to the same data stored in an array, even though the structure
+#' of the data is different.
 #'
-#' @param vec vector, matrix or array of raw, real, integer or logical values
+#' For general hashing of any R object, see
+#' \code{\link[xxhashlite:xxhash]{xxhashlite::xxhash()}}
+#' attributes and dimensions in hashing calculations.
 #'
-#' @useDynLib xxhashlite xxhash64_
-#' @useDynLib xxhashlite xxhash32_
-#' @useDynLib xxhashlite xxhash128_
-#' @useDynLib xxhashlite xxh3_64bits_
+#' @param vec atomic vector (including matrices and arrays) containing raw,
+#'        integer, numeric, complex or logical values only.
+#' @param algo Select the specific xxhash algorithm. Default: 'xxh3_64bits'.
+#'        (the latest algorithm in the xxhash family)
+#'        Valid values: 'xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits'
+#'
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash64 <- function(vec) {
-  .Call(xxhash64_, vec)
+xxhash_vec <- function(vec, algo = 'xxh3_64bits') {
+  .Call(xxhash_vec_, vec, algo);
 }
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' @rdname xxhash64
-#' @export
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash32 <- function(vec) {
-  .Call(xxhash32_, vec)
-}
+
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' @rdname xxhash64
+#' Calculate the hash of an arbitrary R object.
+#'
+#' This function will calculate the hash of any object understood by
+#' \code{base::serialize()}.
+#'
+#' If you are only interested in hashing the data contents of atomic vectors
+#' containing numeric values, then
+#' \code{\link[xxhashlite:xxhash_vec]{xxhashlite::xxhash_vec()}}
+#' offers a speed advantage
+#' over this function.
+#'
+#' @inheritParams  xxhash_vec
+#' @param robj Any R object
+#'
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash128 <- function(vec) {
-  .Call(xxhash128_, vec)
+xxhash <- function(robj, algo = 'xxh3_64bits') {
+  .Call(xxhash_, robj, algo)
 }
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#' @rdname xxhash64
-#' @export
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxh3_64bits <- function(vec) {
-  .Call(xxh3_64bits_, vec)
-}
+

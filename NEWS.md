@@ -1,4 +1,9 @@
 
+# xxhashlite 0.2.0 2020-08-19
+
+* Refactor: Consolidate hash functions for atomic vectors into a single call with an 
+  `algo` argument.
+* Feature: Calculation hashes on any R object understood by `base::serialize()`
 
 # xxhashlite 0.1.2
 

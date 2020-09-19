@@ -1,13 +1,13 @@
 Package: xxhashlite
 Type: Package
-Title: Fast Hashing of Vectors using xxHash
-Version: 0.1.2
+Title: Fast Hashing using xxHash
+Version: 0.2.0
 Author: mikefc
 Maintainer: mikefc <mikefc@coolbutuseless.com>
-Description: Fast Hashing of raw, integer, real and logical vectors using xxHash.
+Description: Fast Hashing of R objects using xxHash.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 Suggests: 
     testthat

@@ -5,43 +5,35 @@
 
 <!-- badges: start -->
 
-![](https://img.shields.io/badge/cool-useless-green.svg)
+![](https://img.shields.io/badge/cool-useless-green.svg) [![Lifecycle:
+maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+[![R build
+status](https://github.com/coolbutuseless/xxhashlite/workflows/R-CMD-check/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions)
 <!-- badges: end -->
 
 `xxhashlite` provides simple access to the *extremely* fast hashing
 functions in [xxHash](https://cyan4973.github.io/xxHash/) for in-memory
-hashing of R atomic, numeric vectors.
+hashing of R objects.
 
-The scope of this package is limited - it aims to provide functions for
-direct, in-memory hashing of vectors which contain raw, integer, real,
-complex or logical values.
+This new version of `xxhashlite` (v0.2.0) is a major update which now
+offers fast hashing of *any* R object by internally leveraging R’s
+serialization capabilities.
 
-If you wanted to hash arbitrary R objects, you could first turn it into
-a raw vector representation using `base::serialize()`.
+This package is a wrapper around [xxHash
+v0.8.0](https://github.com/Cyan4973/xxHash).  
+See `LICENSE-xxHash` for the copyright and licensing information for
+that code. With this latest version of xxHash, the new (even faster)
+hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
-Currently code provided with this package is **xxHash v0.8.0**. See
-`LICENSE-xxHash` for the copyright and licensing information for that
-code.
+## What’s in the box
 
-### Design choices
-
-  - `xxhashlite` will hash the *data payload* within an object, and not
-    the R object itself. This means that hashes calculated within R will
-    match hashes calculated on the equivalent data in a file hashed by
-    the command line programs provided with `xxHash`.
-
-### Limitations
-
-  - As it is the *data payload* of the vector or matrix that is being
-    hashed, this does not include any notion of the container for that
-    data. This means that a vector and array which contain the same data
-    will hash to the same value - regardless of the dimensions or other
-    attributes.
-  - `xxHash v0.8.0` has stabilized the API for `xxh3` and `xxh128` hash
-    functions. While future xxh3 and xxh128 hashes should remain
-    identical for identical data, they will be different from hashes
-    generated in v0.7.x where they were still marked as experimental
-  - `xxHash` is a non-cryptographic hash.
+  - `xxhash(robj, algo)` calculates the hash of any R object understood
+    by `base::serialize()`.
+  - `xxhash_vec(vec, algo)` is a specialist function for hashing the
+    contents of numeric atomic vectors (and ignoring all attributes).
+    This is faster than the general hash function for this specific data
+    as it avoids R’s serialization mechanism and calculates the hash of
+    the bytes in memory.
 
 ## Installation
 
@@ -66,116 +58,164 @@ Here are 2 possible ways to do this:
     (this will change flags for all future compilation, and should
     probably be used with caution)
 
-## Simple hashing of raw, integer, real, complex and logical vectors
+## Why use a hash?
 
-The supplied functions operate directly on the payload within vectors,
-matrices or arrays containing raw, integer, real, complex or logical
-values.
+A hash is a way of succinctly summarising the contents of an object in a
+compact format.
 
-Because these functions operate on the raw data contained in the vector
-and not the R object itself, the attributes and dimensions of the object
-are not included in the hash.
-
-By not having to serialize the R object first, overall hashing time is
-reduced. The price paid for this however is that a vector and matrix
-with the same underlying values, but different dimensions, will hash to
-the same value.
-
-Four hash functions from xxHash’s “simple api” are exposed:
-
-  - **xxhash32** - 32 bit output
-  - **xxhash64** - 64 bit output
-  - **xxhash128** - 128 bit output. New, fast 128bit hash. Stable as of
-    xxHash v0.8.0.
-  - **xxh3\_64bits** - 64 bit output. New, fast 64bit hash. Stable as of
-    xxHash v0.8.0.
-
-<!-- end list -->
+If there are changes to the object (no matter how small) then the hash
+should change as well.
 
 ``` r
 library(xxhashlite)
+xxhash(mtcars)
+#> [1] "2c8a35b061878544"
 
-vec <- raw(1e6)
-mat <- as.array(vec, 1e3, 1e3)
-
-xxhashlite::xxhash32(vec)
-#> [1] "5fff0bcb"
-xxhashlite::xxhash32(mat)
-#> [1] "5fff0bcb"
-
-xxhashlite::xxhash64(vec)
-#> [1] "8a76d36d39caaecc"
-xxhashlite::xxhash64(mat)
-#> [1] "8a76d36d39caaecc"
-
-xxhashlite::xxhash128(vec)
-#> [1] "ef233fc372a159319d648391f361d99a"
-xxhashlite::xxhash128(mat)
-#> [1] "ef233fc372a159319d648391f361d99a"
-
-xxhashlite::xxh3_64bits(vec)
-#> [1] "9d648391f361d99a"
-xxhashlite::xxh3_64bits(mat)
-#> [1] "9d648391f361d99a"
+# Small changes results in a different hash
+mtcars$cyl[1] <- 0
+xxhash(mtcars)
+#> [1] "06a3bba3891cfe7e"
 ```
 
-## Hashing 1 million raw bytes
+## Timing for hashing arbitrary R objects
 
-An R vector of raw bytes may be hashed as:
+`xxhashlite` uses the [xxHash](https://github.com/Cyan4973/xxHash)
+family of hash functions to provide very fast hashing of R objects.
 
-  - An R object containing opaque data e.g. Using `xxhash32()`
-  - The raw data values contained in the object e.g. Using `xxhash32()`
+For the test case shown below, `xxhashlite` is faster at calculating a
+hash than all other methods I could find, with a maximum hashing speed
+in this specific case of 20 GB/s.
 
-Hashing the raw data in the object is 5x to 20x faster than hashing the
-entire object. The reason for this speed difference is because when
-hashing the entire R object, it must first be converted to a raw byte
-representation (using `base::serialize()`) - and this conversion
-operation is expensive.
-
-When hashed as just the data payload, `xxHash` has a throughput of
-around \~25 GB/s (2015 MacBook Pro), but your mileage will vary
-depending on your CPU and compiler flags.
+Note: actual hashing speed will still depend on R’s serialization
+functions e.g. small complex data.frames might have a lot of
+serialization overhead compared to long numeric vectors.
 
 <details>
 
-<summary> Click here to show/hide benchmark code </summary>
+<summary> Click to show/hide the benchmarking code </summary>
 
 ``` r
 library(xxhashlite)
+library(digest)
+library(fastdigest)
 
-N   <- 1e6
-vec <- as.raw(seq(N) %% 256)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Simple data.frame
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+N   <- 1e5
+df  <- data.frame(
+  x = runif(N),
+  y = sample(N)
+)
+
+size <- pryr::object_size(df)
+#> Registered S3 method overwritten by 'pryr':
+#>   method      from
+#>   print.bytes Rcpp
+size
+#> 1.2 MB
+
 
 res <- bench::mark(
-  xxhash32(vec),
-  xxhash64(vec),
-  xxhash128(vec),
-  xxh3_64bits(vec),
+  # {xxhashlite}
+  xxhash(df, 'xxhash32'),
+  xxhash(df, 'xxhash64'),
+  xxhash(df, 'xxhash128'),
+  xxhash(df, 'xxh3_64bits'),
+  
+  # {digest}
+  digest(df, algo = 'xxhash32'),
+  digest(df, algo = 'xxhash64'),
+  digest(df, algo = 'murmur32'),
+  digest(df, algo = 'spookyhash'),
+  
+  # {fastdigest}
+  fastdigest(df),
+  
   check = FALSE
 )
 ```
 
 </details>
 
-| package    | expression        |  median | itr/sec | GB/s |
-| :--------- | :---------------- | ------: | ------: | ---: |
-| xxhashlite | xxhash32(vec)     | 154.2µs |    6154 |  6.0 |
-| xxhashlite | xxhash64(vec)     |  79.3µs |   12048 | 11.7 |
-| xxhashlite | xxhash128(vec)    |  33.8µs |   28079 | 27.5 |
-| xxhashlite | xxh3\_64bits(vec) |  33.7µs |   28155 | 27.6 |
+| package    | expression                      |   median | itr/sec |    MB/s |
+| :--------- | :------------------------------ | -------: | ------: | ------: |
+| xxhashlite | xxhash(df, “xxhash32”)          |  210.6µs |    4685 |  5437.9 |
+| xxhashlite | xxhash(df, “xxhash64”)          | 212.12µs |    4605 |  5398.8 |
+| xxhashlite | xxhash(df, “xxhash128”)         |  55.76µs |   17153 | 20539.3 |
+| xxhashlite | xxhash(df, “xxh3\_64bits”)      |  55.31µs |   17419 | 20706.0 |
+| digest     | digest(df, algo = “xxhash32”)   |   4.67ms |     212 |   245.4 |
+| digest     | digest(df, algo = “xxhash64”)   |   4.46ms |     221 |   257.0 |
+| digest     | digest(df, algo = “murmur32”)   |   4.96ms |     186 |   230.8 |
+| digest     | digest(df, algo = “spookyhash”) | 184.38µs |    4961 |  6211.2 |
+| fastdigest | fastdigest(df)                  | 217.31µs |    4428 |  5270.1 |
 
-Hashing 1 million raw bytes
+Hashing a simple data.frame
 
-## Hashing arbitrary R objects
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
-To hash arbitrary R objects (including numeric vectors with dimensions
-and other attributes), use `base::serialize()` to convert the object to
-a stream of raw bytes.
+## Hashing atomic vectors
+
+`xxhashlite` provides a specific method for hashing data within atomic
+vectors - `xxhash_vec()`.
+
+By avoiding R’s object serialization code, this function operates
+directly on the memory and gains a speed advantage over all other
+methods.
+
+Limitations:
+
+  - This method only applies to atomic vectors/arrays which contains
+    raw, integer, numeric, complex and logical values.
+  - All attributes (including dimensions and class information) are
+    ignored for hashing.
+
+<details>
+
+<summary> Click to show/hide the benchmarking code </summary>
 
 ``` r
-xxhash64(base::serialize(mtcars, NULL))
-#> [1] "64bf7020580dd24d"
+library(xxhashlite)
+library(digest)
+library(fastdigest)
+
+N   <- 1e4
+df  <- runif(N)
+
+size <- pryr::object_size(df)
+size
+#> 80 kB
+
+
+res <- bench::mark(
+  # {xxhashlite}
+  xxhash_vec(df, 'xxh3_64bits'),
+  
+  # {xxhashlite}
+  xxhash(df, 'xxh3_64bits'),
+  
+  # {digest}
+  digest(df, algo = 'spookyhash'),
+  
+  # {fastdigest}
+  fastdigest(df),
+  
+  check = FALSE
+)
 ```
+
+</details>
+
+| package                  | expression                      |  median | itr/sec |    MB/s |
+| :----------------------- | :------------------------------ | ------: | ------: | ------: |
+| xxhashlite - data only   | xxhash\_vec(df, “xxh3\_64bits”) |   4.3µs |  216417 | 17749.3 |
+| xxhashlite - full object | xxhash(df, “xxh3\_64bits”)      |  7.24µs |  119218 | 10538.3 |
+| digest                   | digest(df, algo = “spookyhash”) | 62.61µs |   14595 |  1219.3 |
+| fastdigest               | fastdigest(df)                  | 26.22µs |   35564 |  2911.3 |
+
+Hashing a numeric vector
+
+<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Related Software
 
