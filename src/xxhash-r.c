@@ -66,7 +66,7 @@ SEXP xxhash_vec_(SEXP buffer_, SEXP algo_) {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XXH64_hash_t hash = XXH64(src, size, 0);
 #ifdef _WIN32
-    sprintf(chash, "%I64x", hash);
+    sprintf(chash, "%016I64x", hash);
 #else
     sprintf(chash, "%016llx", hash);
 #endif
@@ -76,7 +76,7 @@ SEXP xxhash_vec_(SEXP buffer_, SEXP algo_) {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XXH64_hash_t hash = XXH3_64bits(src, size);
 #ifdef _WIN32
-    sprintf(chash, "%I64x", hash);
+    sprintf(chash, "%016I64x", hash);
 #else
     sprintf(chash, "%016llx", hash);
 #endif
@@ -86,7 +86,7 @@ SEXP xxhash_vec_(SEXP buffer_, SEXP algo_) {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XXH128_hash_t hash = XXH128(src, size, 0);
 #ifdef _WIN32
-    sprintf(chash, "%I64x%I64x", hash.high64, hash.low64);
+    sprintf(chash, "%016I64x%016I64x", hash.high64, hash.low64);
 #else
     sprintf(chash, "%016llx%016llx", hash.high64, hash.low64);
 #endif
@@ -275,7 +275,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
     XXH64_hash_t const hash = XXH64_digest(xxstate);
     XXH64_freeState(xxstate);
 #ifdef _WIN32
-    sprintf(chash, "%I64x", hash);
+    sprintf(chash, "%016I64x", hash);
 #else
     sprintf(chash, "%016llx", hash);
 #endif
@@ -283,7 +283,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
     XXH128_hash_t const hash = XXH3_128bits_digest(xxstate);
     XXH3_freeState(xxstate);
 #ifdef _WIN32
-    sprintf(chash, "%I64x%I64x", hash.high64, hash.low64);
+    sprintf(chash, "%016I64x%016I64x", hash.high64, hash.low64);
 #else
     sprintf(chash, "%016llx%016llx", hash.high64, hash.low64);
 #endif
@@ -291,7 +291,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
     XXH64_hash_t const hash = XXH3_64bits_digest(xxstate);
     XXH3_freeState(xxstate);
 #ifdef _WIN32
-    sprintf(chash, "%I64x", hash);
+    sprintf(chash, "%016I64x", hash);
 #else
     sprintf(chash, "%016llx", hash);
 #endif
