@@ -274,15 +274,27 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   } else if (strcmp(algo, "xxhash64") == 0) {
     XXH64_hash_t const hash = XXH64_digest(xxstate);
     XXH64_freeState(xxstate);
+#ifdef _WIN32
+    sprintf(chash, "%I64x", hash);
+#else
     sprintf(chash, "%016llx", hash);
+#endif
   } else if (strcmp(algo, "xxhash128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits_digest(xxstate);
     XXH3_freeState(xxstate);
+#ifdef _WIN32
+    sprintf(chash, "%I64x%I64x", hash.high64, hash.low64);
+#else
     sprintf(chash, "%016llx%016llx", hash.high64, hash.low64);
+#endif
   } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
     XXH64_hash_t const hash = XXH3_64bits_digest(xxstate);
     XXH3_freeState(xxstate);
+#ifdef _WIN32
+    sprintf(chash, "%I64x", hash);
+#else
     sprintf(chash, "%016llx", hash);
+#endif
   } else {
     error("Nope: algo = %s\n", algo);
   }
