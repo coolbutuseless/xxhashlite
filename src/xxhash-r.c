@@ -65,19 +65,31 @@ SEXP xxhash_vec_(SEXP buffer_, SEXP algo_) {
     // xxhash64
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XXH64_hash_t hash = XXH64(src, size, 0);
+#ifdef _WIN32
+    sprintf(chash, "%I64x", hash);
+#else
     sprintf(chash, "%016llx", hash);
+#endif
   } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // xxh3 64bits
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XXH64_hash_t hash = XXH3_64bits(src, size);
+#ifdef _WIN32
+    sprintf(chash, "%I64x", hash);
+#else
     sprintf(chash, "%016llx", hash);
+#endif
   } else if (strcmp(algo, "xxhash128") == 0) {
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     // xxhash128
     //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     XXH128_hash_t hash = XXH128(src, size, 0);
+#ifdef _WIN32
+    sprintf(chash, "%I64x%I64x", hash.high64, hash.low64);
+#else
     sprintf(chash, "%016llx%016llx", hash.high64, hash.low64);
+#endif
   } else {
     error("xxhash generic. 'algo' not understood: %s", algo);
   }
