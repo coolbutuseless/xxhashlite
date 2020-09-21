@@ -97,18 +97,15 @@ library(fastdigest)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Simple data.frame
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-N   <- 1e5
+N   <- 5e6
 df  <- data.frame(
   x = runif(N),
   y = sample(N)
 )
 
 size <- pryr::object_size(df)
-#> Registered S3 method overwritten by 'pryr':
-#>   method      from
-#>   print.bytes Rcpp
 size
-#> 1.2 MB
+#> 60 MB
 
 
 res <- bench::mark(
@@ -129,21 +126,22 @@ res <- bench::mark(
   
   check = FALSE
 )
+#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
 ```
 
 </details>
 
 | package    | expression                      |   median | itr/sec |    MB/s |
 | :--------- | :------------------------------ | -------: | ------: | ------: |
-| xxhashlite | xxhash(df, “xxhash32”)          | 193.74µs |    4934 |  5911.0 |
-| xxhashlite | xxhash(df, “xxhash64”)          | 197.31µs |    4845 |  5804.2 |
-| xxhashlite | xxhash(df, “xxhash128”)         |   54.5µs |   17580 | 21014.3 |
-| xxhashlite | xxhash(df, “xxh3\_64bits”)      |   53.1µs |   17647 | 21567.6 |
-| digest     | digest(df, algo = “xxhash32”)   |   4.34ms |     229 |   264.0 |
-| digest     | digest(df, algo = “xxhash64”)   |   4.06ms |     243 |   281.8 |
-| digest     | digest(df, algo = “murmur32”)   |   4.47ms |     219 |   256.1 |
-| digest     | digest(df, algo = “spookyhash”) | 165.21µs |    5763 |  6932.0 |
-| fastdigest | fastdigest(df)                  | 202.34µs |    4774 |  5659.7 |
+| xxhashlite | xxhash(df, “xxhash32”)          |   9.91ms |      95 |  5776.7 |
+| xxhashlite | xxhash(df, “xxhash64”)          |  10.01ms |      96 |  5715.7 |
+| xxhashlite | xxhash(df, “xxhash128”)         |   3.24ms |     276 | 17647.8 |
+| xxhashlite | xxhash(df, “xxh3\_64bits”)      |   3.15ms |     290 | 18156.6 |
+| digest     | digest(df, algo = “xxhash32”)   | 267.82ms |       4 |   213.7 |
+| digest     | digest(df, algo = “xxhash64”)   | 239.81ms |       4 |   238.6 |
+| digest     | digest(df, algo = “murmur32”)   | 263.47ms |       4 |   217.2 |
+| digest     | digest(df, algo = “spookyhash”) |   6.08ms |     149 |  9414.4 |
+| fastdigest | fastdigest(df)                  |   9.78ms |     100 |  5849.8 |
 
 Hashing a simple data.frame
 

@@ -12,6 +12,7 @@ knitr::opts_chunk$set(
   out.width = "100%"
 )
 
+library(pryr)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
@@ -112,7 +113,7 @@ library(fastdigest)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Simple data.frame
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-N   <- 1e5
+N   <- 5e6
 df  <- data.frame(
   x = runif(N),
   y = sample(N)
