@@ -1,7 +1,7 @@
 Package: xxhashlite
 Type: Package
 Title: Fast Hashing using xxHash
-Version: 0.2.0
+Version: 0.2.1
 Author: mikefc
 Maintainer: mikefc <mikefc@coolbutuseless.com>
 Description: Fast Hashing of R objects using xxHash.

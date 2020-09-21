@@ -29,11 +29,6 @@ hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
   - `xxhash(robj, algo)` calculates the hash of any R object understood
     by `base::serialize()`.
-  - `xxhash_vec(vec, algo)` is a specialist function for hashing the
-    contents of numeric atomic vectors (and ignoring all attributes).
-    This is faster than the general hash function for this specific data
-    as it avoids R’s serialization mechanism and calculates the hash of
-    the bytes in memory.
 
 ## Installation
 
@@ -140,82 +135,19 @@ res <- bench::mark(
 
 | package    | expression                      |   median | itr/sec |    MB/s |
 | :--------- | :------------------------------ | -------: | ------: | ------: |
-| xxhashlite | xxhash(df, “xxhash32”)          |  210.6µs |    4685 |  5437.9 |
-| xxhashlite | xxhash(df, “xxhash64”)          | 212.12µs |    4605 |  5398.8 |
-| xxhashlite | xxhash(df, “xxhash128”)         |  55.76µs |   17153 | 20539.3 |
-| xxhashlite | xxhash(df, “xxh3\_64bits”)      |  55.31µs |   17419 | 20706.0 |
-| digest     | digest(df, algo = “xxhash32”)   |   4.67ms |     212 |   245.4 |
-| digest     | digest(df, algo = “xxhash64”)   |   4.46ms |     221 |   257.0 |
-| digest     | digest(df, algo = “murmur32”)   |   4.96ms |     186 |   230.8 |
-| digest     | digest(df, algo = “spookyhash”) | 184.38µs |    4961 |  6211.2 |
-| fastdigest | fastdigest(df)                  | 217.31µs |    4428 |  5270.1 |
+| xxhashlite | xxhash(df, “xxhash32”)          | 193.74µs |    4934 |  5911.0 |
+| xxhashlite | xxhash(df, “xxhash64”)          | 197.31µs |    4845 |  5804.2 |
+| xxhashlite | xxhash(df, “xxhash128”)         |   54.5µs |   17580 | 21014.3 |
+| xxhashlite | xxhash(df, “xxh3\_64bits”)      |   53.1µs |   17647 | 21567.6 |
+| digest     | digest(df, algo = “xxhash32”)   |   4.34ms |     229 |   264.0 |
+| digest     | digest(df, algo = “xxhash64”)   |   4.06ms |     243 |   281.8 |
+| digest     | digest(df, algo = “murmur32”)   |   4.47ms |     219 |   256.1 |
+| digest     | digest(df, algo = “spookyhash”) | 165.21µs |    5763 |  6932.0 |
+| fastdigest | fastdigest(df)                  | 202.34µs |    4774 |  5659.7 |
 
 Hashing a simple data.frame
 
 <img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
-
-## Hashing atomic vectors
-
-`xxhashlite` provides a specific method for hashing data within atomic
-vectors - `xxhash_vec()`.
-
-By avoiding R’s object serialization code, this function operates
-directly on the memory and gains a speed advantage over all other
-methods.
-
-Limitations:
-
-  - This method only applies to atomic vectors/arrays which contains
-    raw, integer, numeric, complex and logical values.
-  - All attributes (including dimensions and class information) are
-    ignored for hashing.
-
-<details>
-
-<summary> Click to show/hide the benchmarking code </summary>
-
-``` r
-library(xxhashlite)
-library(digest)
-library(fastdigest)
-
-N   <- 1e4
-df  <- runif(N)
-
-size <- pryr::object_size(df)
-size
-#> 80 kB
-
-
-res <- bench::mark(
-  # {xxhashlite}
-  xxhash_vec(df, 'xxh3_64bits'),
-  
-  # {xxhashlite}
-  xxhash(df, 'xxh3_64bits'),
-  
-  # {digest}
-  digest(df, algo = 'spookyhash'),
-  
-  # {fastdigest}
-  fastdigest(df),
-  
-  check = FALSE
-)
-```
-
-</details>
-
-| package                  | expression                      |  median | itr/sec |    MB/s |
-| :----------------------- | :------------------------------ | ------: | ------: | ------: |
-| xxhashlite - data only   | xxhash\_vec(df, “xxh3\_64bits”) |   4.3µs |  216417 | 17749.3 |
-| xxhashlite - full object | xxhash(df, “xxh3\_64bits”)      |  7.24µs |  119218 | 10538.3 |
-| digest                   | digest(df, algo = “spookyhash”) | 62.61µs |   14595 |  1219.3 |
-| fastdigest               | fastdigest(df)                  | 26.22µs |   35564 |  2911.3 |
-
-Hashing a numeric vector
-
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
 
 ## Related Software
 

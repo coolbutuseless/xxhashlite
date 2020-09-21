@@ -17,10 +17,3 @@ Valid values: 'xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits'}
 This function will calculate the hash of any object understood by
 \code{base::serialize()}.
 }
-\details{
-If you are only interested in hashing the data contents of atomic vectors
-containing numeric values, then
-\code{\link[xxhashlite:xxhash_vec]{xxhashlite::xxhash_vec()}}
-offers a speed advantage
-over this function.
-}

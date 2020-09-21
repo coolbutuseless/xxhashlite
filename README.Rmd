@@ -44,10 +44,6 @@ version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and
 
 * `xxhash(robj, algo)` calculates the hash of any R object understood by 
 `base::serialize()`.
-* `xxhash_vec(vec, algo)` is a specialist function for hashing the contents
-of numeric atomic vectors (and ignoring all attributes).  This is faster than 
-the general hash function for this specific data as it avoids R's serialization
-mechanism and calculates the hash of the bytes in memory.
 
 
 ## Installation
@@ -169,81 +165,6 @@ res %>%
 plot(res) + 
   theme_bw()
 ```
-
-
-
-## Hashing atomic vectors
-
-`xxhashlite` provides a specific method for hashing data within atomic vectors - 
-`xxhash_vec()`.  
-
-By avoiding R's object serialization code, this function operates directly on the memory
-and gains a speed advantage over all other methods.
-
-Limitations:
-
-* This method only applies to atomic vectors/arrays which contains raw, integer,
-  numeric, complex and logical values.
-* All attributes (including dimensions and class information) are ignored for
-  hashing.
-
-
-<details>
-<summary> Click to show/hide the benchmarking code </summary>
-
-```{r bench2}
-library(xxhashlite)
-library(digest)
-library(fastdigest)
-
-N   <- 1e4
-df  <- runif(N)
-
-size <- pryr::object_size(df)
-size
-
-
-res <- bench::mark(
-  # {xxhashlite}
-  xxhash_vec(df, 'xxh3_64bits'),
-  
-  # {xxhashlite}
-  xxhash(df, 'xxh3_64bits'),
-  
-  # {digest}
-  digest(df, algo = 'spookyhash'),
-  
-  # {fastdigest}
-  fastdigest(df),
-  
-  check = FALSE
-)
-```
-
-</details>
-
-
-```{r echo = FALSE}
-res %>% 
-  mutate(`MB/s` = round(size/1024^2 / as.numeric(median), 1)) %>%
-  mutate(`itr/sec` = round(`itr/sec`)) %>%
-  select(expression, median, `itr/sec`, `MB/s`) %>%
-  mutate(package = c(
-    rep('xxhashlite - data only'  ,  1),
-    rep('xxhashlite - full object',  1),
-    rep('digest'                  ,  1),
-    rep('fastdigest'              ,  1)
-  )) %>%
-  select(package, everything()) %>%
-  knitr::kable(caption = "Hashing a numeric vector")
-```
-
-
-```{r echo = FALSE}
-plot(res) + 
-  theme_bw()
-```
-
 
 
 ## Related Software
