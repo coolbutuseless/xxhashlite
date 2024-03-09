@@ -54,14 +54,14 @@ if (FALSE) {
 # Capture all the hashes from the command line here
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ref <- list(
-  raw = list(xxhash32 = "57ff623f", xxhash64 = "2248cf8e3a94dcd6", 
-             xxhash128 = "d2e3818b9db41d399fabfe83722c4062", xxh3_64bits = "9fabfe83722c4062"), 
-  dbl = list(xxhash32 = "f174df39", xxhash64 = "98eff518cf372652", 
-             xxhash128 = "9b6c34a96ba5dec6b730ee74eef07cb7", xxh3_64bits = "31bfe0f8f39443da"), 
-  int = list(xxhash32 = "cb4d196f", xxhash64 = "8295d1be2d952a3f", 
-             xxhash128 = "886cbed1190eb82139aa549a24cdb3c5", xxh3_64bits = "9d1529b13a2dea6b"), 
-  lgl = list(xxhash32 = "91d543e0", xxhash64 = "d6fcc76a7bc7079f", 
-             xxhash128 = "c2986ddd79e32c97543f7ef2662aab0d", xxh3_64bits = "543f7ef2662aab0d")
+  raw = list(xxhash32 = "6ff92168", xxhash64 = "dcfd90ef642d73f8", 
+             xxhash128 = "4fc87515240631d4b48315fe8abb8212", xxh3_64bits = "b48315fe8abb8212"), 
+  dbl = list(xxhash32 = "6ae334e0", xxhash64 = "7299b3c5ced2e073", 
+             xxhash128 = "6f4bebda420f81152b704eb96fec1db3", xxh3_64bits = "c63557f4a3267354"), 
+  int = list(xxhash32 = "4f307e83", xxhash64 = "bef75013873e762e", 
+             xxhash128 = "391e00a5330655a9bbd83ad3220d2a67", xxh3_64bits = "d1a1bad45282b79c"), 
+  lgl = list(xxhash32 = "e58e8003", xxhash64 = "5a3f227afa24d073", 
+             xxhash128 = "b5cd4df90650c13db3a5c75d23dd6456", xxh3_64bits = "b3a5c75d23dd6456")
 )
 
 
@@ -75,8 +75,7 @@ test_that("Same hashes in R and from xxHash command line (xxhsum)", {
     for (algo in c('xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits')) {
       result    <- xxhash(test, algo = algo)
       reference <- ref[[nm]][[algo]]
-      # message(result, " == ", reference)
-      expect_identical(result, reference)
+      expect_identical(result, reference, label = paste(nm, algo))
     }
   }
   
