@@ -74,3 +74,16 @@ test_that("Same hashes in R and from xxHash command line (xxhsum)", {
   }
   
 })
+
+
+test_that("xxhash_raw() on strings works", {
+  
+  expect_identical(
+    xxhash_raw("hello"),
+    xxhash_raw(charToRaw("hello"))
+  )
+  
+})
+
+
+

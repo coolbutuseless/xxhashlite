@@ -210,10 +210,18 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_) {
   
   void *src;
   size_t len;
+  char *tmp;
   
   if (TYPEOF(robj_) == RAWSXP) {
     src = (void *)RAW(robj_);
     len = (size_t)length(robj_);
+  } else if (TYPEOF(robj_) == STRSXP) {
+    if (length(robj_) != 1) {
+      error("xxhash_raw() character arguments must only be length-1");
+    }
+    tmp = (char *)CHAR(STRING_ELT(robj_, 0));
+    src = (void *)tmp;
+    len = strlen(tmp);
   } else {
     error("xxhash_raw_(): only raw vectors supported");
   }

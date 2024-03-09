@@ -41,11 +41,16 @@ version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and
 
 ## ToDo
 
-* `xxhash_raw()` should accept strings
 * `xxhash_file()` use streaming interface to hash incrementally
 * Skip first 18+n bytes when serializing - this is all very speific information
   like R_VERSION number which would change on every minor version bump.
   See `rlang::hash()` implementation for details.
+* `xxhash_raw()`: use the `_with_seed()` variants of `XXH3_128bits()` and `XXH3_128bits()`
+* `xxhash()`: expose the `seed` as an argument
+* rename algorithms to:
+    * `xxh32`, `xxh64`
+    * `xxh3-64`, `xxh3-128`
+
 
 ## Notes
 
