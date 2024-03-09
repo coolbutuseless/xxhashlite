@@ -39,6 +39,14 @@ for the copyright and licensing information for that code.  With this latest
 version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and 
 `xxhash128`, are considered stable.
 
+## ToDo
+
+* `xxhash_raw()` should accept strings
+* `xxhash_file()` use streaming interface to hash incrementally
+* Skip first 18+n bytes when serializing - this is all very speific information
+  like R_VERSION number which would change on every minor version bump.
+  See `rlang::hash()` implementation for details.
+
 ## Notes
 
 * Only supports R versions >= v3.5.0 as this is when the serialization 
@@ -49,7 +57,8 @@ version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and
 
 * `xxhash(robj, algo)` calculates the hash of any R object understood by 
 `base::serialize()`.
-
+* `xxhash(robj, algo, seed)` calculates the hash of a raw vector or string. 
+  This function is appropriate when comparing hashes of non-R objects.
 
 ## Installation
 
@@ -59,18 +68,6 @@ You can install from [GitHub](https://github.com/coolbutuseless/xxhashlite) with
 # install.package('remotes')
 remotes::install_github('coolbutuseless/xxhashlite)
 ```
-
-#### Installation - set CFLAGs for optimised executable
-
-To get the most out of what `xxHash` offers, it will be important to set
-some optimization flags for your machine.  The important compiler flags to set 
-are `-O3` and `-march=native`.
-
-Here are 2 possible ways to do this:
-
-1. Copy `src/Makevars.custom` to `src/Makevars` re-build package.
-2. Edit your `~/.R/Makevars` to include `CFLAGS = -O3 -march=native` (this will
-  change flags for all future compilation, and should probably be used with caution)
 
 
 ## Why use a hash?

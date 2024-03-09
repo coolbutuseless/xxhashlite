@@ -211,8 +211,73 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
 
 
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Serialize an R object
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_) {
+  
+  const char *algo = CHAR(asChar((algo_)));
+  
+  void *src;
+  size_t len;
+  
+  if (TYPEOF(robj_) == RAWSXP) {
+    src = (void *)RAW(robj_);
+    len = (size_t)length(robj_);
+  } else {
+    error("xxhash_raw_(): only raw vectors supported");
+  }
+  
+  
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Char string to hole longest hash of 128bits.
+  // Each byte needs 2 chars in hex e.g. 255 = 'FF'
+  // 128bits = 16bytes = 32 chars + 1-byte for trailing NULL
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  char chash[32+1];
+  
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Set up the state
+  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  if (strcmp(algo, "xxhash32") == 0) {
+    XXH32_hash_t const hash = XXH32(src, len, (XXH32_hash_t)asInteger(seed_));
+    snprintf(chash, sizeof(chash), "%08x", hash);
+  } else if (strcmp(algo, "xxhash64") == 0) {
+    XXH64_hash_t const hash = XXH64(src, len, (XXH64_hash_t)asInteger(seed_));
+#ifdef _WIN32
+    snprintf(chash, sizeof(chash), "%016I64x", hash);
+#else
+    snprintf(chash, sizeof(chash), "%016llx", hash);
+#endif
+  } else if (strcmp(algo, "xxhash128") == 0) {
+    XXH128_hash_t const hash = XXH3_128bits(src, len);
+#ifdef _WIN32
+    snprintf(chash, sizeof(chash), "%016I64x%016I64x", hash.high64, hash.low64);
+#else
+    snprintf(chash, sizeof(chash), "%016llx%016llx", hash.high64, hash.low64);
+#endif
+  } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
+    XXH64_hash_t const hash = XXH3_64bits(src, len);
+#ifdef _WIN32
+    snprintf(chash, "%016I64x", hash);
+#else
+    snprintf(chash, sizeof(chash), "%016llx", hash);
+#endif
+  } else {
+    error("Nope: algo = %s\n", algo);
+  }
+  
+
+  return mkString(chash);
+}
 
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// File
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SEXP xxhash_file_(SEXP robj_, SEXP algo_, SEXP seed_) {
+  return R_NilValue;
+}
 
 
 

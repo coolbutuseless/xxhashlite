@@ -3,14 +3,17 @@
 #include <Rinternals.h>
 
 SEXP xxhash_(SEXP robj_, SEXP algo_);
-
+SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_);
+SEXP xxhash_file_(SEXP file_, SEXP algo_, SEXP seed_);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // .C      R_CMethodDef
 // .Call   R_CallMethodDef
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static const R_CallMethodDef CEntries[] = {
-  {"xxhash_", (DL_FUNC) &xxhash_, 2},
+  {"xxhash_"     , (DL_FUNC) &xxhash_     , 2},
+  {"xxhash_raw_" , (DL_FUNC) &xxhash_raw_ , 3},
+  {"xxhash_file_", (DL_FUNC) &xxhash_file_, 3},
   {NULL, NULL, 0}
 };
 

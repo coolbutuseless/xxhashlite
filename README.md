@@ -23,6 +23,14 @@ See `LICENSE-xxHash` for the copyright and licensing information for
 that code. With this latest version of xxHash, the new (even faster)
 hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
+## ToDo
+
+- `xxhash_raw()` should accept strings
+- `xxhash_file()` use streaming interface to hash incrementally
+- Skip first 18+n bytes when serializing - this is all very speific
+  information like R_VERSION number which would change on every minor
+  version bump. See `rlang::hash()` implementation for details.
+
 ## Notes
 
 - Only supports R versions \>= v3.5.0 as this is when the serialization
@@ -33,6 +41,9 @@ hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
 - `xxhash(robj, algo)` calculates the hash of any R object understood by
   `base::serialize()`.
+- `xxhash(robj, algo, seed)` calculates the hash of a raw vector or
+  string. This function is appropriate when comparing hashes of non-R
+  objects.
 
 ## Installation
 
@@ -43,19 +54,6 @@ You can install from
 # install.package('remotes')
 remotes::install_github('coolbutuseless/xxhashlite)
 ```
-
-#### Installation - set CFLAGs for optimised executable
-
-To get the most out of what `xxHash` offers, it will be important to set
-some optimization flags for your machine. The important compiler flags
-to set are `-O3` and `-march=native`.
-
-Here are 2 possible ways to do this:
-
-1.  Copy `src/Makevars.custom` to `src/Makevars` re-build package.
-2.  Edit your `~/.R/Makevars` to include `CFLAGS = -O3 -march=native`
-    (this will change flags for all future compilation, and should
-    probably be used with caution)
 
 ## Why use a hash?
 
@@ -139,15 +137,15 @@ res <- bench::mark(
 
 | package    | expression                      |  median | itr/sec |    MB/s |
 |:-----------|:--------------------------------|--------:|--------:|--------:|
-| xxhashlite | xxhash(df, “xxhash32”)          | 16.64ms |      60 |  3439.1 |
-| xxhashlite | xxhash(df, “xxhash64”)          |  3.81ms |     262 | 15022.7 |
-| xxhashlite | xxhash(df, “xxhash128”)         |  3.43ms |     291 | 16686.6 |
-| xxhashlite | xxhash(df, “xxh3_64bits”)       |  3.44ms |     287 | 16636.8 |
-| digest     | digest(df, algo = “xxhash32”)   |  57.6ms |      17 |   993.4 |
-| digest     | digest(df, algo = “xxhash64”)   |  50.1ms |      20 |  1142.2 |
-| digest     | digest(df, algo = “murmur32”)   | 70.29ms |      14 |   814.1 |
-| digest     | digest(df, algo = “spookyhash”) |  4.32ms |     231 | 13255.4 |
-| fastdigest | fastdigest(df)                  |  4.25ms |     235 | 13473.8 |
+| xxhashlite | xxhash(df, “xxhash32”)          | 16.53ms |      61 |  3462.4 |
+| xxhashlite | xxhash(df, “xxhash64”)          |  3.81ms |     261 | 15037.0 |
+| xxhashlite | xxhash(df, “xxhash128”)         |  3.42ms |     290 | 16705.8 |
+| xxhashlite | xxhash(df, “xxh3_64bits”)       |  3.43ms |     290 | 16676.3 |
+| digest     | digest(df, algo = “xxhash32”)   | 57.82ms |      17 |   989.6 |
+| digest     | digest(df, algo = “xxhash64”)   | 50.67ms |      20 |  1129.3 |
+| digest     | digest(df, algo = “murmur32”)   | 70.62ms |      14 |   810.3 |
+| digest     | digest(df, algo = “spookyhash”) |  4.32ms |     228 | 13234.3 |
+| fastdigest | fastdigest(df)                  |  4.25ms |     233 | 13457.4 |
 
 Hashing a simple data.frame
 

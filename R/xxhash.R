@@ -19,3 +19,42 @@ xxhash <- function(robj, algo = 'xxh3_64bits') {
 }
 
 
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' Calculate the hash of a raw vector or string
+#' 
+#' @inheritParams xxhash
+#' @param robj raw vector or single character string
+#' @param seed integer seed for initial hash value. default: 0
+#' 
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xxhash_raw <- function(robj, algo = 'xxh3_64bits', seed = 0L) {
+  .Call(xxhash_raw_, robj, algo, seed)
+}
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' Calculate the hash of a file
+#' 
+#' @inheritParams xxhash_raw
+#' @param file filename
+#' 
+#' @export
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xxhash_file <- function(file, algo = 'xxh3_64bits', seed = 0L) {
+  .Call(xxhash_file_, file, algo, seed)
+}
+
+
+
+
+if (FALSE) {
+  v <- c(1L, 2L, 3L, 4L)
+  rlang::hash(v)
+ 
+  sv <- serialize(v, NULL, xdr = FALSE)
+  
+  xxhash_raw(sv[-c(1:23)], algo = 'xxhash128') |> print()
+}
