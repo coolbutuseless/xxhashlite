@@ -9,6 +9,8 @@
 
 #include "xxhash.h"
 
+#include <inttypes.h> // PRIx64
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Hash a byte
@@ -173,27 +175,15 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   } else if (strcmp(algo, "xxhash64") == 0) {
     XXH64_hash_t const hash = XXH64_digest(xxstate);
     XXH64_freeState(xxstate);
-#ifdef _WIN32
-    snprintf(chash, sizeof(chash), "%016I64x", hash);
-#else
-    snprintf(chash, sizeof(chash), "%016llx", hash);
-#endif
+    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else if (strcmp(algo, "xxhash128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits_digest(xxstate);
     XXH3_freeState(xxstate);
-#ifdef _WIN32
-    snprintf(chash, sizeof(chash), "%016I64x%016I64x", hash.high64, hash.low64);
-#else
-    snprintf(chash, sizeof(chash), "%016llx%016llx", hash.high64, hash.low64);
-#endif
+    snprintf(chash, sizeof(chash), "%016" PRIx64 "%016" PRIx64, hash.high64, hash.low64);
   } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
     XXH64_hash_t const hash = XXH3_64bits_digest(xxstate);
     XXH3_freeState(xxstate);
-#ifdef _WIN32
-    snprintf(chash, "%016I64x", hash);
-#else
-    snprintf(chash, sizeof(chash), "%016llx", hash);
-#endif
+    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else {
     error("Nope: algo = %s\n", algo);
   }
@@ -244,25 +234,13 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_) {
     snprintf(chash, sizeof(chash), "%08x", hash);
   } else if (strcmp(algo, "xxhash64") == 0) {
     XXH64_hash_t const hash = XXH64(src, len, (XXH64_hash_t)asInteger(seed_));
-#ifdef _WIN32
-    snprintf(chash, sizeof(chash), "%016I64x", hash);
-#else
-    snprintf(chash, sizeof(chash), "%016llx", hash);
-#endif
+    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else if (strcmp(algo, "xxhash128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits(src, len);
-#ifdef _WIN32
-    snprintf(chash, sizeof(chash), "%016I64x%016I64x", hash.high64, hash.low64);
-#else
-    snprintf(chash, sizeof(chash), "%016llx%016llx", hash.high64, hash.low64);
-#endif
+    snprintf(chash, sizeof(chash), "%016" PRIx64 "%016" PRIx64, hash.high64, hash.low64);
   } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
     XXH64_hash_t const hash = XXH3_64bits(src, len);
-#ifdef _WIN32
-    snprintf(chash, "%016I64x", hash);
-#else
-    snprintf(chash, sizeof(chash), "%016llx", hash);
-#endif
+    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else {
     error("Nope: algo = %s\n", algo);
   }
