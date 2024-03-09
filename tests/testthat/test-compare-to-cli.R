@@ -1,10 +1,12 @@
 
 obj <- list(
-  raw  = as.raw(seq_len(1024*1024) %% 255),
-  dbl  = as.double(seq(1024*1024)),
-  int  = as.integer(seq(1024*1024)),
-  lgl  = rep(c(TRUE, FALSE), 1024)
+  raw  = as.raw(seq_len(1024) %% 255),
+  dbl  = as.double(seq(1024)),
+  int  = as.integer(seq(1024)),
+  lgl  = rep(c(TRUE, FALSE), 512)
 )
+
+algos <- c('xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits')
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Run the command line xxHash over data
@@ -13,39 +15,27 @@ if (FALSE) {
   
   ref <- list()
   
-  writeBin(serialize(obj$raw, NULL, xdr = TRUE), "working/test.img", size = 1)
-  ref$raw <- list(
-    xxhash32    = system('xxhsum -H0 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash64    = system('xxhsum -H1 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash128   = system('xxhsum -H2 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxh3_64bits = system('xxhsum -H3 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> tail(1)
-  )
+  for (nm in names(obj)) {
+    ref[[nm]] <- list()
+    dat <- obj[[nm]]
+    filename <- paste0(nm, ".bin")
+    filename <- testthat::test_path(filename)
+    writeBin(serialize(dat, NULL, xdr = FALSE), filename, size = 1)
+    for (i in seq_along(algos)) {
+      algo <- algos[i]
+      cmd <- sprintf("xxhsum -H%i %s", i-1, filename)
+      res <- system(cmd, intern = TRUE) |> strsplit(" ") |> el()
+      if (algo == 'xxh3_64bits') {
+        res <- tail(res, 1)
+      } else {
+        res <- head(res, 1)
+      }
+      ref[[nm]][[algo]] <- res
+    }
+  }
   
-  writeBin(serialize(obj$dbl, NULL, xdr = TRUE), "working/test.img", size = 1)
-  ref$dbl <- list(
-    xxhash32    = system('xxhsum -H0 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash64    = system('xxhsum -H1 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash128   = system('xxhsum -H2 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxh3_64bits = system('xxhsum -H3 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> tail(1)
-  )
-
+  ref
   
-  writeBin(serialize(obj$int, NULL, xdr = TRUE), "working/test.img", size = 1)
-  ref$int <- list(
-    xxhash32    = system('xxhsum -H0 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash64    = system('xxhsum -H1 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash128   = system('xxhsum -H2 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxh3_64bits = system('xxhsum -H3 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> tail(1)
-  )
-
-  
-  writeBin(serialize(obj$lgl, NULL, xdr = TRUE), "working/test.img", size = 1)
-  ref$lgl <- list(
-    xxhash32    = system('xxhsum -H0 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash64    = system('xxhsum -H1 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxhash128   = system('xxhsum -H2 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> head(1),
-    xxh3_64bits = system('xxhsum -H3 working/test.img', intern = TRUE) |> strsplit(" ") |> el() |> tail(1)
-  )
 
 }
 
@@ -54,14 +44,14 @@ if (FALSE) {
 # Capture all the hashes from the command line here
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ref <- list(
-  raw = list(xxhash32 = "6ff92168", xxhash64 = "dcfd90ef642d73f8", 
-             xxhash128 = "4fc87515240631d4b48315fe8abb8212", xxh3_64bits = "b48315fe8abb8212"), 
-  dbl = list(xxhash32 = "6ae334e0", xxhash64 = "7299b3c5ced2e073", 
-             xxhash128 = "6f4bebda420f81152b704eb96fec1db3", xxh3_64bits = "c63557f4a3267354"), 
-  int = list(xxhash32 = "4f307e83", xxhash64 = "bef75013873e762e", 
-             xxhash128 = "391e00a5330655a9bbd83ad3220d2a67", xxh3_64bits = "d1a1bad45282b79c"), 
-  lgl = list(xxhash32 = "e58e8003", xxhash64 = "5a3f227afa24d073", 
-             xxhash128 = "b5cd4df90650c13db3a5c75d23dd6456", xxh3_64bits = "b3a5c75d23dd6456")
+  raw = list(xxhash32 = "8460bda9", xxhash64 = "00e57cb921892898", 
+             xxhash128 = "44c4a18300025592f8f3fcb32de7befc", xxh3_64bits = "f8f3fcb32de7befc"), 
+  dbl = list(xxhash32 = "ca9c9fce", xxhash64 = "aca5accb6a0dfe74", 
+             xxhash128 = "41cd4df490971609446fe5ee32c8410f", xxh3_64bits = "9de70506fdaba2a9"), 
+  int = list(xxhash32 = "716051ed", xxhash64 = "683312d708813dc9", 
+             xxhash128 = "4f95b75e8b9506fb1c101904f3279907", xxh3_64bits = "c9851632e886e01c"), 
+  lgl = list(xxhash32 = "ba36c788", xxhash64 = "7e5df9cc3c997ca8", 
+             xxhash128 = "8da01f89f4bd520eb615184122e4760a", xxh3_64bits = "b615184122e4760a")
 )
 
 
@@ -72,7 +62,7 @@ test_that("Same hashes in R and from xxHash command line (xxhsum)", {
 
   for (nm in names(obj)) {
     test <- obj[[nm]]
-    for (algo in c('xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits')) {
+    for (algo in algos) {
       result    <- xxhash(test, algo = algo)
       reference <- ref[[nm]][[algo]]
       expect_identical(result, reference, label = paste(nm, algo))
