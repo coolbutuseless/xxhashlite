@@ -25,12 +25,11 @@ xxhash <- function(robj, algo = 'xxh3_64bits') {
 #' 
 #' @inheritParams xxhash
 #' @param robj raw vector or single character string
-#' @param seed integer seed for initial hash value. default: 0
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_raw <- function(robj, algo = 'xxh3_64bits', seed = 0L) {
-  .Call(xxhash_raw_, robj, algo, seed)
+xxhash_raw <- function(robj, algo = 'xxh3_64bits') {
+  .Call(xxhash_raw_, robj, algo)
 }
 
 
@@ -43,8 +42,8 @@ xxhash_raw <- function(robj, algo = 'xxh3_64bits', seed = 0L) {
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_file <- function(file, algo = 'xxh3_64bits', seed = 0L) {
-  .Call(xxhash_file_, file, algo, seed)
+xxhash_file <- function(file, algo = 'xxh3_64bits') {
+  .Call(xxhash_file_, file, algo)
 }
 
 

@@ -204,7 +204,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Serialize an R object
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_) {
+SEXP xxhash_raw_(SEXP robj_, SEXP algo_) {
   
   const char *algo = CHAR(asChar((algo_)));
   
@@ -238,10 +238,10 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_) {
   // Set up the state
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (strcmp(algo, "xxhash32") == 0) {
-    XXH32_hash_t const hash = XXH32(src, len, (XXH32_hash_t)asInteger(seed_));
+    XXH32_hash_t const hash = XXH32(src, len, 0);
     snprintf(chash, sizeof(chash), "%08x", hash);
   } else if (strcmp(algo, "xxhash64") == 0) {
-    XXH64_hash_t const hash = XXH64(src, len, (XXH64_hash_t)asInteger(seed_));
+    XXH64_hash_t const hash = XXH64(src, len, 0);
     snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else if (strcmp(algo, "xxhash128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits(src, len);
@@ -261,7 +261,7 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP seed_) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // File
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SEXP xxhash_file_(SEXP robj_, SEXP algo_, SEXP seed_) {
+SEXP xxhash_file_(SEXP robj_, SEXP algo_) {
   return R_NilValue;
 }
 

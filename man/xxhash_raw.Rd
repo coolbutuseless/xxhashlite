@@ -4,7 +4,7 @@
 \alias{xxhash_raw}
 \title{Calculate the hash of a raw vector or string}
 \usage{
-xxhash_raw(robj, algo = "xxh3_64bits", seed = 0L)
+xxhash_raw(robj, algo = "xxh3_64bits")
 }
 \arguments{
 \item{robj}{raw vector or single character string}
@@ -12,8 +12,6 @@ xxhash_raw(robj, algo = "xxh3_64bits", seed = 0L)
 \item{algo}{Select the specific xxhash algorithm. Default: 'xxh3_64bits'.
 (the latest algorithm in the xxhash family)
 Valid values: 'xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits'}
-
-\item{seed}{integer seed for initial hash value. default: 0}
 }
 \description{
 Calculate the hash of a raw vector or string
