@@ -1,13 +1,21 @@
 Package: xxhashlite
 Type: Package
-Title: Fast Hashing using xxHash
-Version: 0.2.1
-Author: mikefc
-Maintainer: mikefc <mikefc@coolbutuseless.com>
+Title: Fast Hashing using 'xxHash' Algorithm
+Version: 0.2.1.9000
+Authors@R: c(
+    person("Mike", "Cheng", role = c("aut", "cre", 'cph'), 
+    email = "mikefc@coolbutuseless.com"),
+    person(given = "Yann",
+           family = "Collet",
+           role = "cph", 
+           comment = "Author of the embedded zstandard library")
+    )
+Maintainer: Mike Cheng <mikefc@coolbutuseless.com>
 Description: Fast Hashing of R objects using xxHash.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.1
 Suggests: 
     testthat
+Depends:
+    R (>= 3.5.0)

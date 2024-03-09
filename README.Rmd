@@ -23,8 +23,7 @@ library(xxhashlite)
 
 <!-- badges: start -->
 ![](https://img.shields.io/badge/cool-useless-green.svg)
-[![Lifecycle: maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build status](https://github.com/coolbutuseless/xxhashlite/workflows/R-CMD-check/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions)
+[![R-CMD-check](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `xxhashlite` provides simple access to the *extremely* fast hashing functions
@@ -40,6 +39,11 @@ for the copyright and licensing information for that code.  With this latest
 version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and 
 `xxhash128`, are considered stable.
 
+## Notes
+
+* Only supports R versions >= v3.5.0 as this is when the serialization 
+  infrastructure had a breaking change, and this package will not support
+  the old version.
 
 ## What's in the box
 

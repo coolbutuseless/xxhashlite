@@ -2,7 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 
-extern SEXP xxhash_();
+SEXP xxhash_(SEXP robj_, SEXP algo_);
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -10,7 +10,7 @@ extern SEXP xxhash_();
 // .Call   R_CallMethodDef
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 static const R_CallMethodDef CEntries[] = {
-  {"xxhash_"          , (DL_FUNC) &xxhash_          , 2},
+  {"xxhash_", (DL_FUNC) &xxhash_, 2},
   {NULL, NULL, 0}
 };
 

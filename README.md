@@ -5,10 +5,8 @@
 
 <!-- badges: start -->
 
-![](https://img.shields.io/badge/cool-useless-green.svg) [![Lifecycle:
-maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![R build
-status](https://github.com/coolbutuseless/xxhashlite/workflows/R-CMD-check/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions)
+![](https://img.shields.io/badge/cool-useless-green.svg)
+[![R-CMD-check](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `xxhashlite` provides simple access to the *extremely* fast hashing
@@ -25,10 +23,16 @@ See `LICENSE-xxHash` for the copyright and licensing information for
 that code. With this latest version of xxHash, the new (even faster)
 hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
+## Notes
+
+- Only supports R versions \>= v3.5.0 as this is when the serialization
+  infrastructure had a breaking change, and this package will not
+  support the old version.
+
 ## What’s in the box
 
-  - `xxhash(robj, algo)` calculates the hash of any R object understood
-    by `base::serialize()`.
+- `xxhash(robj, algo)` calculates the hash of any R object understood by
+  `base::serialize()`.
 
 ## Installation
 
@@ -64,12 +68,12 @@ should change as well.
 ``` r
 library(xxhashlite)
 xxhash(mtcars)
-#> [1] "2c8a35b061878544"
+#> [1] "5813d8235e54fe81"
 
 # Small changes results in a different hash
 mtcars$cyl[1] <- 0
 xxhash(mtcars)
-#> [1] "06a3bba3891cfe7e"
+#> [1] "7b43291c0bc36080"
 ```
 
 ## Timing for hashing arbitrary R objects
@@ -86,8 +90,9 @@ functions e.g. small complex data.frames might have a lot of
 serialization overhead compared to long numeric vectors.
 
 <details>
-
-<summary> Click to show/hide the benchmarking code </summary>
+<summary>
+Click to show/hide the benchmarking code
+</summary>
 
 ``` r
 library(xxhashlite)
@@ -105,7 +110,7 @@ df  <- data.frame(
 
 size <- pryr::object_size(df)
 size
-#> 60 MB
+#> 60.00 MB
 
 
 res <- bench::mark(
@@ -126,22 +131,23 @@ res <- bench::mark(
   
   check = FALSE
 )
-#> Warning: Some expressions had a GC in every iteration; so filtering is disabled.
+#> Warning: Some expressions had a GC in every iteration; so filtering is
+#> disabled.
 ```
 
 </details>
 
-| package    | expression                      |   median | itr/sec |    MB/s |
-| :--------- | :------------------------------ | -------: | ------: | ------: |
-| xxhashlite | xxhash(df, “xxhash32”)          |   9.91ms |      95 |  5776.7 |
-| xxhashlite | xxhash(df, “xxhash64”)          |  10.01ms |      96 |  5715.7 |
-| xxhashlite | xxhash(df, “xxhash128”)         |   3.24ms |     276 | 17647.8 |
-| xxhashlite | xxhash(df, “xxh3\_64bits”)      |   3.15ms |     290 | 18156.6 |
-| digest     | digest(df, algo = “xxhash32”)   | 267.82ms |       4 |   213.7 |
-| digest     | digest(df, algo = “xxhash64”)   | 239.81ms |       4 |   238.6 |
-| digest     | digest(df, algo = “murmur32”)   | 263.47ms |       4 |   217.2 |
-| digest     | digest(df, algo = “spookyhash”) |   6.08ms |     149 |  9414.4 |
-| fastdigest | fastdigest(df)                  |   9.78ms |     100 |  5849.8 |
+| package    | expression                      |  median | itr/sec |    MB/s |
+|:-----------|:--------------------------------|--------:|--------:|--------:|
+| xxhashlite | xxhash(df, “xxhash32”)          | 16.64ms |      60 |  3439.1 |
+| xxhashlite | xxhash(df, “xxhash64”)          |  3.81ms |     262 | 15022.7 |
+| xxhashlite | xxhash(df, “xxhash128”)         |  3.43ms |     291 | 16686.6 |
+| xxhashlite | xxhash(df, “xxh3_64bits”)       |  3.44ms |     287 | 16636.8 |
+| digest     | digest(df, algo = “xxhash32”)   |  57.6ms |      17 |   993.4 |
+| digest     | digest(df, algo = “xxhash64”)   |  50.1ms |      20 |  1142.2 |
+| digest     | digest(df, algo = “murmur32”)   | 70.29ms |      14 |   814.1 |
+| digest     | digest(df, algo = “spookyhash”) |  4.32ms |     231 | 13255.4 |
+| fastdigest | fastdigest(df)                  |  4.25ms |     235 | 13473.8 |
 
 Hashing a simple data.frame
 
@@ -149,22 +155,21 @@ Hashing a simple data.frame
 
 ## Related Software
 
-  - The original [xxHash](https://cyan4973.github.io/xxHash/) software.
-  - The [`digest`](https://cran.r-project.org/package=digest) package is
-    a much more comprehensive approach to hashing from within R -
-    multiple hashing functions and much more configurability
-  - The
-    [`hashFunction`](https://cran.r-project.org/package=hashFunction)
-    package offers some hasing functions that work directly on character
-    or integer values.
-  - The [`fastdigest`](https://cran.r-project.org/package=fastdigest)
-    offers the fast non-cryptographic ‘SpookyHash’ and will hash
-    anything that serialize knows about.
+- The original [xxHash](https://cyan4973.github.io/xxHash/) software.
+- The [`digest`](https://cran.r-project.org/package=digest) package is a
+  much more comprehensive approach to hashing from within R - multiple
+  hashing functions and much more configurability
+- The [`hashFunction`](https://cran.r-project.org/package=hashFunction)
+  package offers some hasing functions that work directly on character
+  or integer values.
+- The [`fastdigest`](https://cran.r-project.org/package=fastdigest)
+  offers the fast non-cryptographic ‘SpookyHash’ and will hash anything
+  that serialize knows about.
 
 ## Acknowledgements
 
-  - Yann Collett for releasing, maintaining and advancing
-    [xxHash](https://cyan4973.github.io/xxHash/)
-  - R Core for developing and maintaining such a great language.
-  - CRAN maintainers, for patiently shepherding packages onto CRAN and
-    maintaining the repository
+- Yann Collett for releasing, maintaining and advancing
+  [xxHash](https://cyan4973.github.io/xxHash/)
+- R Core for developing and maintaining such a great language.
+- CRAN maintainers, for patiently shepherding packages onto CRAN and
+  maintaining the repository
