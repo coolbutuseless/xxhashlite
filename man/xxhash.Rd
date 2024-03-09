@@ -4,14 +4,14 @@
 \alias{xxhash}
 \title{Calculate the hash of an arbitrary R object.}
 \usage{
-xxhash(robj, algo = "xxh3_64bits")
+xxhash(robj, algo = "xxh3")
 }
 \arguments{
 \item{robj}{Any R object}
 
 \item{algo}{Select the specific xxhash algorithm. Default: 'xxh3_64bits'.
 (the latest algorithm in the xxhash family)
-Valid values: 'xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits'}
+Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
 }
 \description{
 This function will calculate the hash of any object understood by

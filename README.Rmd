@@ -129,10 +129,10 @@ size
 
 res <- bench::mark(
   # {xxhashlite}
-  xxhash(df, 'xxhash32'),
-  xxhash(df, 'xxhash64'),
-  xxhash(df, 'xxhash128'),
-  xxhash(df, 'xxh3_64bits'),
+  xxhash(df, 'xxh32'),
+  xxhash(df, 'xxh64'),
+  xxhash(df, 'xxh128'),
+  xxhash(df, 'xxh3'),
   
   # {digest}
   digest(df, algo = 'xxhash32'),

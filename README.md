@@ -18,7 +18,7 @@ offers fast hashing of *any* R object by internally leveraging R’s
 serialization capabilities.
 
 This package is a wrapper around [xxHash
-v0.8.0](https://github.com/Cyan4973/xxHash).  
+v0.8.3](https://github.com/Cyan4973/xxHash).  
 See `LICENSE-xxHash` for the copyright and licensing information for
 that code. With this latest version of xxHash, the new (even faster)
 hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
@@ -29,9 +29,6 @@ hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 - Skip first 18+n bytes when serializing - this is all very speific
   information like R_VERSION number which would change on every minor
   version bump. See `rlang::hash()` implementation for details.
-- `xxhash_raw()`: use the `_with_seed()` variants of `XXH3_128bits()`
-  and `XXH3_128bits()`
-- `xxhash()`: expose the `seed` as an argument
 - rename algorithms to:
   - `xxh32`, `xxh64`
   - `xxh3-64`, `xxh3-128`
@@ -118,10 +115,10 @@ size
 
 res <- bench::mark(
   # {xxhashlite}
-  xxhash(df, 'xxhash32'),
-  xxhash(df, 'xxhash64'),
-  xxhash(df, 'xxhash128'),
-  xxhash(df, 'xxh3_64bits'),
+  xxhash(df, 'xxh32'),
+  xxhash(df, 'xxh64'),
+  xxhash(df, 'xxh128'),
+  xxhash(df, 'xxh3'),
   
   # {digest}
   digest(df, algo = 'xxhash32'),
@@ -142,15 +139,15 @@ res <- bench::mark(
 
 | package    | expression                      |  median | itr/sec |    MB/s |
 |:-----------|:--------------------------------|--------:|--------:|--------:|
-| xxhashlite | xxhash(df, “xxhash32”)          | 16.58ms |      61 |  3451.8 |
-| xxhashlite | xxhash(df, “xxhash64”)          |  3.81ms |     261 | 15010.0 |
-| xxhashlite | xxhash(df, “xxhash128”)         |  3.44ms |     286 | 16633.5 |
-| xxhashlite | xxhash(df, “xxh3_64bits”)       |  3.43ms |     290 | 16691.0 |
-| digest     | digest(df, algo = “xxhash32”)   | 59.53ms |      17 |   961.1 |
-| digest     | digest(df, algo = “xxhash64”)   | 52.57ms |      19 |  1088.5 |
-| digest     | digest(df, algo = “murmur32”)   | 77.23ms |      13 |   740.9 |
-| digest     | digest(df, algo = “spookyhash”) |  4.32ms |     231 | 13254.3 |
-| fastdigest | fastdigest(df)                  |  4.25ms |     235 | 13465.2 |
+| xxhashlite | xxhash(df, “xxh32”)             | 16.73ms |      60 |  3419.9 |
+| xxhashlite | xxhash(df, “xxh64”)             |   3.8ms |     262 | 15043.0 |
+| xxhashlite | xxhash(df, “xxh128”)            |  3.43ms |     289 | 16703.9 |
+| xxhashlite | xxhash(df, “xxh3”)              |  3.42ms |     292 | 16725.1 |
+| digest     | digest(df, algo = “xxhash32”)   | 57.85ms |      17 |   989.1 |
+| digest     | digest(df, algo = “xxhash64”)   | 50.99ms |      20 |  1122.3 |
+| digest     | digest(df, algo = “murmur32”)   | 71.26ms |      14 |   803.0 |
+| digest     | digest(df, algo = “spookyhash”) |  4.33ms |     228 | 13218.4 |
+| fastdigest | fastdigest(df)                  |  4.24ms |     235 | 13499.2 |
 
 Hashing a simple data.frame
 

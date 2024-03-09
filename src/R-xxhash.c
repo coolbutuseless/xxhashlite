@@ -103,28 +103,28 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Set up the state
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (strcmp(algo, "xxhash32") == 0) {
+  if (strcmp(algo, "xxh3") == 0) {
+    xxstate = XXH3_createState();
+    err = XXH3_64bits_reset(xxstate);
+    hash_byte  = xxh3_64bits_hash_byte;
+    hash_bytes = xxh3_64bits_hash_bytes;
+  } else if (strcmp(algo, "xxh128") == 0) {
+    xxstate = XXH3_createState();
+    err = XXH3_128bits_reset(xxstate);
+    hash_byte  = xxh3_128bits_hash_byte;
+    hash_bytes = xxh3_128bits_hash_bytes;
+  } else if (strcmp(algo, "xxh32") == 0) {
     xxstate = XXH32_createState();
     XXH32_hash_t const seed = 0;
     err = XXH32_reset((XXH32_state_t *)xxstate, seed);
     hash_byte  = xxh32_hash_byte;
     hash_bytes = xxh32_hash_bytes;
-  } else if (strcmp(algo, "xxhash64") == 0) {
+  } else if (strcmp(algo, "xxh64") == 0) {
     xxstate = XXH64_createState();
     XXH64_hash_t const seed = 0;
     err = XXH64_reset((XXH64_state_t *)xxstate, seed);
     hash_byte  = xxh64_hash_byte;
     hash_bytes = xxh64_hash_bytes;
-  } else if (strcmp(algo, "xxhash128") == 0) {
-    xxstate = XXH3_createState();
-    err = XXH3_128bits_reset(xxstate);
-    hash_byte  = xxh3_128bits_hash_byte;
-    hash_bytes = xxh3_128bits_hash_bytes;
-  } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
-    xxstate = XXH3_createState();
-    err = XXH3_64bits_reset(xxstate);
-    hash_byte  = xxh3_64bits_hash_byte;
-    hash_bytes = xxh3_64bits_hash_bytes;
   } else {
     error("Nope: algo = %s\n", algo);
   }
@@ -168,21 +168,21 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Produce the final hash value
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (strcmp(algo, "xxhash32") == 0) {
-    XXH32_hash_t const hash = XXH32_digest(xxstate);
-    XXH32_freeState(xxstate);
-    snprintf(chash, sizeof(chash), "%08x", hash);
-  } else if (strcmp(algo, "xxhash64") == 0) {
-    XXH64_hash_t const hash = XXH64_digest(xxstate);
-    XXH64_freeState(xxstate);
+  if (strcmp(algo, "xxh3") == 0) {
+    XXH64_hash_t const hash = XXH3_64bits_digest(xxstate);
+    XXH3_freeState(xxstate);
     snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
-  } else if (strcmp(algo, "xxhash128") == 0) {
+  } else if (strcmp(algo, "xxh128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits_digest(xxstate);
     XXH3_freeState(xxstate);
     snprintf(chash, sizeof(chash), "%016" PRIx64 "%016" PRIx64, hash.high64, hash.low64);
-  } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
-    XXH64_hash_t const hash = XXH3_64bits_digest(xxstate);
-    XXH3_freeState(xxstate);
+  } else if (strcmp(algo, "xxh32") == 0) {
+    XXH32_hash_t const hash = XXH32_digest(xxstate);
+    XXH32_freeState(xxstate);
+    snprintf(chash, sizeof(chash), "%08x", hash);
+  } else if (strcmp(algo, "xxh64") == 0) {
+    XXH64_hash_t const hash = XXH64_digest(xxstate);
+    XXH64_freeState(xxstate);
     snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else {
     error("Nope: algo = %s\n", algo);
@@ -223,7 +223,7 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_) {
     src = (void *)tmp;
     len = strlen(tmp);
   } else {
-    error("xxhash_raw_(): only raw vectors supported");
+    error("xxhash_raw_(): only raw vectors and strings are supported");
   }
   
   
@@ -237,17 +237,17 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_) {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Set up the state
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  if (strcmp(algo, "xxhash32") == 0) {
-    XXH32_hash_t const hash = XXH32(src, len, 0);
-    snprintf(chash, sizeof(chash), "%08x", hash);
-  } else if (strcmp(algo, "xxhash64") == 0) {
-    XXH64_hash_t const hash = XXH64(src, len, 0);
+  if (strcmp(algo, "xxh3") == 0){
+    XXH64_hash_t const hash = XXH3_64bits(src, len);
     snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
-  } else if (strcmp(algo, "xxhash128") == 0) {
+  } else if (strcmp(algo, "xxh128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits(src, len);
     snprintf(chash, sizeof(chash), "%016" PRIx64 "%016" PRIx64, hash.high64, hash.low64);
-  } else if (strcmp(algo, "xxh3_64bits") == 0 || strcmp(algo, "xxh3") == 0) {
-    XXH64_hash_t const hash = XXH3_64bits(src, len);
+  } else if (strcmp(algo, "xxh32") == 0) {
+    XXH32_hash_t const hash = XXH32(src, len, 0);
+    snprintf(chash, sizeof(chash), "%08x", hash);
+  } else if (strcmp(algo, "xxh64") == 0) {
+    XXH64_hash_t const hash = XXH64(src, len, 0);
     snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
   } else {
     error("Nope: algo = %s\n", algo);

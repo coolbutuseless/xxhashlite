@@ -4,14 +4,14 @@
 \alias{xxhash_raw}
 \title{Calculate the hash of a raw vector or string}
 \usage{
-xxhash_raw(robj, algo = "xxh3_64bits")
+xxhash_raw(vec, algo = "xxh3")
 }
 \arguments{
-\item{robj}{raw vector or single character string}
+\item{vec}{raw vector or single character string}
 
 \item{algo}{Select the specific xxhash algorithm. Default: 'xxh3_64bits'.
 (the latest algorithm in the xxhash family)
-Valid values: 'xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits'}
+Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
 }
 \description{
 Calculate the hash of a raw vector or string

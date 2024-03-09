@@ -10,11 +10,11 @@
 #' @param robj Any R object
 #' @param algo Select the specific xxhash algorithm. Default: 'xxh3_64bits'.
 #'        (the latest algorithm in the xxhash family)
-#'        Valid values: 'xxhash32', 'xxhash64', 'xxhash128', 'xxh3_64bits'
+#'        Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'
 #'
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash <- function(robj, algo = 'xxh3_64bits') {
+xxhash <- function(robj, algo = 'xxh3') {
   .Call(xxhash_, robj, algo)
 }
 
@@ -24,12 +24,12 @@ xxhash <- function(robj, algo = 'xxh3_64bits') {
 #' Calculate the hash of a raw vector or string
 #' 
 #' @inheritParams xxhash
-#' @param robj raw vector or single character string
+#' @param vec raw vector or single character string
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_raw <- function(robj, algo = 'xxh3_64bits') {
-  .Call(xxhash_raw_, robj, algo)
+xxhash_raw <- function(vec, algo = 'xxh3') {
+  .Call(xxhash_raw_, vec, algo)
 }
 
 
@@ -42,7 +42,7 @@ xxhash_raw <- function(robj, algo = 'xxh3_64bits') {
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_file <- function(file, algo = 'xxh3_64bits') {
+xxhash_file <- function(file, algo = 'xxh3') {
   .Call(xxhash_file_, file, algo)
 }
 
@@ -55,5 +55,5 @@ if (FALSE) {
  
   sv <- serialize(v, NULL, xdr = FALSE)
   
-  xxhash_raw(sv[-c(1:23)], algo = 'xxhash128') |> print()
+  xxhash_raw(sv[-c(1:23)], algo = 'xxh128') |> print()
 }
