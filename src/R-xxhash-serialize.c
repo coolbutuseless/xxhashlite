@@ -130,7 +130,8 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   XXH_errorcode err;
   ser_state_t ser_state = {
     .in_header = true,
-    .n = 0
+    .n = 0,
+    .xxstate = NULL
   };
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,7 +162,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   }
 
   if (err == XXH_ERROR) {
-    error("xxhash(): couldn't initialise state for %s", algo);
+    error("xxhash_(): Unknown algorithm '%s'", algo);
   }
 
 
@@ -215,9 +216,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
     XXH64_hash_t const hash = XXH64_digest(ser_state.xxstate);
     XXH64_freeState(ser_state.xxstate);
     snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
-  } else {
-    error("Nope: algo = %s\n", algo);
-  }
+  } 
 
 
   return mkString(chash);

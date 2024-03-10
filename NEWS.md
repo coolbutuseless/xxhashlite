@@ -6,6 +6,8 @@
 * Remove option to set seeds
 * Remove single byte callbacks for serialization. These are never used in binary
   mode serialization.
+* Skip serialization header so reculsts for xxh128 match `rlang::hash()`
+* Hash files
 
 # xxhashlite 0.2.1.9000  2024-03-09
 

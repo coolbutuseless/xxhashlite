@@ -68,14 +68,3 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_) {
   return mkString(chash);
 }
 
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// File
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SEXP xxhash_file_(SEXP robj_, SEXP algo_) {
-  return R_NilValue;
-}
-
-
-
-

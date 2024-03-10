@@ -41,10 +41,6 @@ version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and
 
 ## ToDo
 
-* `xxhash_file()` use streaming interface to hash incrementally
-* Skip first 18+n bytes when serializing - this is all very speific information
-  like R_VERSION number which would change on every minor version bump.
-  See `rlang::hash()` implementation for details.
 * Add option to return raw bytes of hash?
 
 ## Notes
@@ -57,8 +53,9 @@ version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and
 
 * `xxhash(robj, algo)` calculates the hash of any R object understood by 
 `base::serialize()`.
-* `xxhash(robj, algo, seed)` calculates the hash of a raw vector or string. 
+* `xxhash_raw(vec, algo)` calculates the hash of a raw vector or string. 
   This function is appropriate when comparing hashes of non-R objects.
+* `xxhash_file(file, algo)` calculates the hash of a file
 
 ## Installation
 
