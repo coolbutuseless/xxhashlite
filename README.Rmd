@@ -35,13 +35,8 @@ hashing of *any* R object by internally leveraging R's serialization capabilitie
 
 This package is a wrapper around [xxHash v0.8.3](https://github.com/Cyan4973/xxHash).  
 See `LICENSE-xxHash`
-for the copyright and licensing information for that code.  With this latest
-version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and 
-`xxhash128`, are considered stable.
+for the copyright and licensing information for that code.  
 
-## ToDo
-
-* Add option to return raw bytes of hash?
 
 ## Notes
 

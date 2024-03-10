@@ -23,16 +23,6 @@ See `LICENSE-xxHash` for the copyright and licensing information for
 that code. With this latest version of xxHash, the new (even faster)
 hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
-## ToDo
-
-- `xxhash_file()` use streaming interface to hash incrementally
-- Skip first 18+n bytes when serializing - this is all very speific
-  information like R_VERSION number which would change on every minor
-  version bump. See `rlang::hash()` implementation for details.
-- rename algorithms to:
-  - `xxh32`, `xxh64`
-  - `xxh3-64`, `xxh3-128`
-
 ## Notes
 
 - Only supports R versions \>= v3.5.0 as this is when the serialization
@@ -43,9 +33,9 @@ hash functions, `xxh3_64bits` and `xxhash128`, are considered stable.
 
 - `xxhash(robj, algo)` calculates the hash of any R object understood by
   `base::serialize()`.
-- `xxhash(robj, algo, seed)` calculates the hash of a raw vector or
-  string. This function is appropriate when comparing hashes of non-R
-  objects.
+- `xxhash_raw(vec, algo)` calculates the hash of a raw vector or string.
+  This function is appropriate when comparing hashes of non-R objects.
+- `xxhash_file(file, algo)` calculates the hash of a file
 
 ## Installation
 
@@ -68,12 +58,12 @@ should change as well.
 ``` r
 library(xxhashlite)
 xxhash(mtcars)
-#> [1] "5813d8235e54fe81"
+#> [1] "d0487363db4e6cc64fdb740cb6617fc0"
 
 # Small changes results in a different hash
 mtcars$cyl[1] <- 0
 xxhash(mtcars)
-#> [1] "7b43291c0bc36080"
+#> [1] "e999db3ed8f21dc2cd52b97a08f0c9f5"
 ```
 
 ## Timing for hashing arbitrary R objects
@@ -98,6 +88,12 @@ Click to show/hide the benchmarking code
 library(xxhashlite)
 library(digest)
 library(fastdigest)
+library(rlang)
+#> 
+#> Attaching package: 'rlang'
+#> The following object is masked from 'package:pryr':
+#> 
+#>     bytes
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Simple data.frame
@@ -115,6 +111,8 @@ size
 
 res <- bench::mark(
   # {xxhashlite}
+  hash(df),
+  
   xxhash(df, 'xxh32'),
   xxhash(df, 'xxh64'),
   xxhash(df, 'xxh128'),
@@ -137,17 +135,18 @@ res <- bench::mark(
 
 </details>
 
-| package    | expression                      |  median | itr/sec |    MB/s |
-|:-----------|:--------------------------------|--------:|--------:|--------:|
-| xxhashlite | xxhash(df, “xxh32”)             | 16.73ms |      60 |  3419.9 |
-| xxhashlite | xxhash(df, “xxh64”)             |   3.8ms |     262 | 15043.0 |
-| xxhashlite | xxhash(df, “xxh128”)            |  3.43ms |     289 | 16703.9 |
-| xxhashlite | xxhash(df, “xxh3”)              |  3.42ms |     292 | 16725.1 |
-| digest     | digest(df, algo = “xxhash32”)   | 57.85ms |      17 |   989.1 |
-| digest     | digest(df, algo = “xxhash64”)   | 50.99ms |      20 |  1122.3 |
-| digest     | digest(df, algo = “murmur32”)   | 71.26ms |      14 |   803.0 |
-| digest     | digest(df, algo = “spookyhash”) |  4.33ms |     228 | 13218.4 |
-| fastdigest | fastdigest(df)                  |  4.24ms |     235 | 13499.2 |
+| package     | expression                      |  median | itr/sec |    MB/s |
+|:------------|:--------------------------------|--------:|--------:|--------:|
+| rlang::hash | hash(df)                        |  2.36ms |     426 | 24214.7 |
+| xxhashlite  | xxhash(df, “xxh32”)             | 14.09ms |      69 |  4061.5 |
+| xxhashlite  | xxhash(df, “xxh64”)             |   3.8ms |     262 | 15070.6 |
+| xxhashlite  | xxhash(df, “xxh128”)            |  3.48ms |     286 | 16453.1 |
+| xxhashlite  | xxhash(df, “xxh3”)              |   3.4ms |     293 | 16817.4 |
+| digest      | digest(df, algo = “xxhash32”)   | 59.76ms |      17 |   957.5 |
+| digest      | digest(df, algo = “xxhash64”)   | 51.58ms |      19 |  1109.4 |
+| digest      | digest(df, algo = “murmur32”)   | 71.14ms |      14 |   804.3 |
+| digest      | digest(df, algo = “spookyhash”) |  4.36ms |     226 | 13114.2 |
+| fastdigest  | fastdigest(df)                  |  4.28ms |     232 | 13365.5 |
 
 Hashing a simple data.frame
 

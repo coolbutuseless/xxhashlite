@@ -4,7 +4,7 @@
 \alias{xxhash_file}
 \title{Calculate the hash of a file}
 \usage{
-xxhash_file(file, algo = "xxh128")
+xxhash_file(file, algo = "xxh128", as_raw = FALSE)
 }
 \arguments{
 \item{file}{filename}
@@ -12,6 +12,9 @@ xxhash_file(file, algo = "xxh128")
 \item{algo}{Select the specific xxhash algorithm. Default: 'xxh128'.
 (the latest algorithm in the xxhash family)
 Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
+
+\item{as_raw}{Return the hash as a raw vector of bytes instead of string?
+Default: FALSE}
 }
 \description{
 Calculate the hash of a file

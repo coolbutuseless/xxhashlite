@@ -8,14 +8,14 @@
 #define XXH_IMPLEMENTATION   /* access definitions */
 
 #include "xxhash.h"
-
+#include "R-xxhash-utils.h"
 #include <inttypes.h> // PRIx64
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Serialize an R object
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SEXP xxhash_raw_(SEXP robj_, SEXP algo_) {
+SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP as_raw_) {
   
   const char *algo = CHAR(asChar((algo_)));
   
@@ -37,34 +37,28 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_) {
     error("xxhash_raw_(): only raw vectors and strings are supported");
   }
   
-  
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Char string to hole longest hash of 128bits.
-  // Each byte needs 2 chars in hex e.g. 255 = 'FF'
-  // 128bits = 16bytes = 32 chars + 1-byte for trailing NULL
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  char chash[32+1];
+  SEXP res_ = R_NilValue;
   
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Set up the state
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if (strcmp(algo, "xxh128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits(src, len);
-    snprintf(chash, sizeof(chash), "%016" PRIx64 "%016" PRIx64, hash.high64, hash.low64);
+    res_ = PROTECT(xxh128_hash_to_robj(hash, as_raw_));
   } else if (strcmp(algo, "xxh3") == 0){
     XXH64_hash_t const hash = XXH3_64bits(src, len);
-    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
+    res_ = PROTECT(xxh64_hash_to_robj(hash, as_raw_));
   } else if (strcmp(algo, "xxh32") == 0) {
     XXH32_hash_t const hash = XXH32(src, len, 0);
-    snprintf(chash, sizeof(chash), "%08x", hash);
+    res_ = PROTECT(xxh32_hash_to_robj(hash, as_raw_));
   } else if (strcmp(algo, "xxh64") == 0) {
     XXH64_hash_t const hash = XXH64(src, len, 0);
-    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
+    res_ = PROTECT(xxh64_hash_to_robj(hash, as_raw_));
   } else {
     error("Nope: algo = %s\n", algo);
   }
   
-
-  return mkString(chash);
+  UNPROTECT(1);
+  return res_;
 }
 

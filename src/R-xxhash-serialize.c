@@ -8,7 +8,7 @@
 #define XXH_STATIC_LINKING_ONLY   /* access advanced declarations */
 
 #include "xxhash.h"
-
+#include "R-xxhash-utils.h"
 
 typedef struct {
   bool in_header;
@@ -122,7 +122,7 @@ void xxh64_hash_bytes(R_outpstream_t stream, void *src, int n) {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Serialize an R object
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-SEXP xxhash_(SEXP robj_, SEXP algo_) {
+SEXP xxhash_(SEXP robj_, SEXP algo_, SEXP as_raw_) {
 
   const char *algo = CHAR(asChar((algo_)));
 
@@ -190,12 +190,7 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   R_Serialize(robj_, &output_stream);
 
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Char string to hole longest hash of 128bits.
-  // Each byte needs 2 chars in hex e.g. 255 = 'FF'
-  // 128bits = 16bytes = 32 chars + 1-byte for trailing NULL
-  //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  char chash[32+1];
+  SEXP res_ = R_NilValue;
 
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Produce the final hash value
@@ -203,21 +198,21 @@ SEXP xxhash_(SEXP robj_, SEXP algo_) {
   if (strcmp(algo, "xxh128") == 0) {
     XXH128_hash_t const hash = XXH3_128bits_digest(ser_state.xxstate);
     XXH3_freeState(ser_state.xxstate);
-    snprintf(chash, sizeof(chash), "%016" PRIx64 "%016" PRIx64, hash.high64, hash.low64);
+    res_ = PROTECT(xxh128_hash_to_robj(hash, as_raw_));
   } else if (strcmp(algo, "xxh3") == 0) {
     XXH64_hash_t const hash = XXH3_64bits_digest(ser_state.xxstate);
     XXH3_freeState(ser_state.xxstate);
-    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
+    res_ = PROTECT(xxh64_hash_to_robj(hash, as_raw_));
   } else if (strcmp(algo, "xxh32") == 0) {
     XXH32_hash_t const hash = XXH32_digest(ser_state.xxstate);
     XXH32_freeState(ser_state.xxstate);
-    snprintf(chash, sizeof(chash), "%08x", hash);
+    res_ = PROTECT(xxh32_hash_to_robj(hash, as_raw_));
   } else if (strcmp(algo, "xxh64") == 0) {
     XXH64_hash_t const hash = XXH64_digest(ser_state.xxstate);
     XXH64_freeState(ser_state.xxstate);
-    snprintf(chash, sizeof(chash), "%016" PRIx64, hash);
+    res_ = PROTECT(xxh64_hash_to_robj(hash, as_raw_));
   } 
 
-
-  return mkString(chash);
+  UNPROTECT(1);
+  return res_;
 }

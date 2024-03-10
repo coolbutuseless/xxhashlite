@@ -11,11 +11,13 @@
 #' @param algo Select the specific xxhash algorithm. Default: 'xxh128'.
 #'        (the latest algorithm in the xxhash family)
 #'        Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'
+#' @param as_raw Return the hash as a raw vector of bytes instead of string?
+#'        Default: FALSE
 #'
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash <- function(robj, algo = 'xxh128') {
-  .Call(xxhash_, robj, algo)
+xxhash <- function(robj, algo = 'xxh128', as_raw = FALSE) {
+  .Call(xxhash_, robj, algo, as_raw)
 }
 
 
@@ -28,8 +30,8 @@ xxhash <- function(robj, algo = 'xxh128') {
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_raw <- function(vec, algo = 'xxh128') {
-  .Call(xxhash_raw_, vec, algo)
+xxhash_raw <- function(vec, algo = 'xxh128', as_raw = FALSE) {
+  .Call(xxhash_raw_, vec, algo, as_raw)
 }
 
 
@@ -42,8 +44,8 @@ xxhash_raw <- function(vec, algo = 'xxh128') {
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_file <- function(file, algo = 'xxh128') {
-  .Call(xxhash_file_, file, algo)
+xxhash_file <- function(file, algo = 'xxh128', as_raw = FALSE) {
+  .Call(xxhash_file_, file, algo, as_raw)
 }
 
 

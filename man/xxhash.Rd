@@ -4,7 +4,7 @@
 \alias{xxhash}
 \title{Calculate the hash of an arbitrary R object.}
 \usage{
-xxhash(robj, algo = "xxh128")
+xxhash(robj, algo = "xxh128", as_raw = FALSE)
 }
 \arguments{
 \item{robj}{Any R object}
@@ -12,6 +12,9 @@ xxhash(robj, algo = "xxh128")
 \item{algo}{Select the specific xxhash algorithm. Default: 'xxh128'.
 (the latest algorithm in the xxhash family)
 Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
+
+\item{as_raw}{Return the hash as a raw vector of bytes instead of string?
+Default: FALSE}
 }
 \description{
 This function will calculate the hash of any object understood by
