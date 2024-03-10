@@ -45,10 +45,7 @@ version of xxHash, the new (even faster) hash functions, `xxh3_64bits` and
 * Skip first 18+n bytes when serializing - this is all very speific information
   like R_VERSION number which would change on every minor version bump.
   See `rlang::hash()` implementation for details.
-* rename algorithms to:
-    * `xxh32`, `xxh64`
-    * `xxh3-64`, `xxh3-128`
-
+* Add option to return raw bytes of hash?
 
 ## Notes
 
@@ -113,6 +110,7 @@ to long numeric vectors.
 library(xxhashlite)
 library(digest)
 library(fastdigest)
+library(rlang)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Simple data.frame
@@ -129,6 +127,8 @@ size
 
 res <- bench::mark(
   # {xxhashlite}
+  hash(df),
+  
   xxhash(df, 'xxh32'),
   xxhash(df, 'xxh64'),
   xxhash(df, 'xxh128'),
@@ -156,7 +156,7 @@ res %>%
   mutate(`itr/sec` = round(`itr/sec`)) %>%
   select(expression, median, `itr/sec`, `MB/s`) %>%
   mutate(package = c(
-    # rep('xxhashlite - data only',  4),
+    rep('rlang::hash',  1),
     rep('xxhashlite'            ,  4),
     rep('digest'                ,  4),
     rep('fastdigest'            ,  1)

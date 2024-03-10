@@ -8,13 +8,13 @@
 #' \code{base::serialize()}.
 #'
 #' @param robj Any R object
-#' @param algo Select the specific xxhash algorithm. Default: 'xxh3_64bits'.
+#' @param algo Select the specific xxhash algorithm. Default: 'xxh128'.
 #'        (the latest algorithm in the xxhash family)
 #'        Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'
 #'
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash <- function(robj, algo = 'xxh3') {
+xxhash <- function(robj, algo = 'xxh128') {
   .Call(xxhash_, robj, algo)
 }
 
@@ -28,7 +28,7 @@ xxhash <- function(robj, algo = 'xxh3') {
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_raw <- function(vec, algo = 'xxh3') {
+xxhash_raw <- function(vec, algo = 'xxh128') {
   .Call(xxhash_raw_, vec, algo)
 }
 
@@ -42,7 +42,7 @@ xxhash_raw <- function(vec, algo = 'xxh3') {
 #' 
 #' @export
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-xxhash_file <- function(file, algo = 'xxh3') {
+xxhash_file <- function(file, algo = 'xxh128') {
   .Call(xxhash_file_, file, algo)
 }
 
@@ -51,9 +51,10 @@ xxhash_file <- function(file, algo = 'xxh3') {
 
 if (FALSE) {
   v <- c(1L, 2L, 3L, 4L)
+  v <- "hello"
   rlang::hash(v)
  
   sv <- serialize(v, NULL, xdr = FALSE)
   
-  xxhash_raw(sv[-c(1:23)], algo = 'xxh128') |> print()
+  xxhash_raw(sv[-c(1:23)]) |> print()
 }

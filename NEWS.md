@@ -1,4 +1,12 @@
 
+
+# xxhashlite 0.2.1.9001  2024-03-10
+
+* Rename hash option to better align with official documentation
+* Remove option to set seeds
+* Remove single byte callbacks for serialization. These are never used in binary
+  mode serialization.
+
 # xxhashlite 0.2.1.9000  2024-03-09
 
 * Update vendored 'xxHash' library to version 0.8.3
