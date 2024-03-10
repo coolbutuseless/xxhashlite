@@ -12,7 +12,7 @@
 
 # xxhashlite 0.2.1.9000  2024-03-09
 
-* Update vendored 'xxHash' library to version 0.8.3
+* Update vendored 'xxHash' library to version 0.8.2
 
 # xxhashlite 0.2.1 2020-08-22
 

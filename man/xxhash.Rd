@@ -16,7 +16,15 @@ Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
 \item{as_raw}{Return the hash as a raw vector of bytes instead of string?
 Default: FALSE}
 }
+\value{
+String representation of hash. If \code{as_raw = TRUE} then a 
+        raw vector is returned instead.
+}
 \description{
 This function will calculate the hash of any object understood by
 \code{base::serialize()}.
+}
+\examples{
+xxhash(mtcars)
+xxhash(mtcars, algo = 'xxh3', as_raw = TRUE)
 }

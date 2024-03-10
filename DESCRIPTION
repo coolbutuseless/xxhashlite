@@ -1,21 +1,26 @@
 Package: xxhashlite
 Type: Package
-Title: Fast Hashing using 'xxHash' Algorithm
+Title: Fast Hashing of R Objects, Raw Data and Files using 'xxHash' Algorithm
 Version: 0.2.1.9000
 Authors@R: c(
-    person("Mike", "Cheng", role = c("aut", "cre", 'cph'), 
-    email = "mikefc@coolbutuseless.com"),
-    person(given = "Yann",
-           family = "Collet",
-           role = "cph", 
-           comment = "Author of the embedded zstandard library")
+    person("Mike", "Cheng", role = c("aut", "cre", 'cph'), email = "mikefc@coolbutuseless.com"),
+    person("Yann", "Collet", role = c("ctb", "cph"), comment = "Author of the embedded xxhash library")
     )
 Maintainer: Mike Cheng <mikefc@coolbutuseless.com>
-Description: Fast Hashing of R objects using xxHash.
+Description: Fast Hashing of R objects using xxHash.  R objects are hashed via
+    the standard serialization mechanism in R.  Raw byte vectos and strings
+    can be handled directly for compatibility with hashes created on 
+    other systems.  This implementation is a wrapper around the 'xxHash' 'C'
+    library which is available from <https://github.com/Cyan4973/xxHash>.
 License: MIT + file LICENSE
+URL: https://github.com/coolbutuseless/xxhashlite
+BugReports: https://github.com/coolbutuseless/xxhashlite/issues
 Encoding: UTF-8
 RoxygenNote: 7.3.1
 Suggests: 
     testthat
 Depends:
     R (>= 3.5.0)
+Copyright: This package includes code from the 'xxhash' written Yann Collet.  
+    See file 'inst/LICENSE-xxhash' for copyright information of the 
+    original library.

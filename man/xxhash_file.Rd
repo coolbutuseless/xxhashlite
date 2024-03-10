@@ -16,6 +16,14 @@ Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
 \item{as_raw}{Return the hash as a raw vector of bytes instead of string?
 Default: FALSE}
 }
+\value{
+String representation of hash. If \code{as_raw = TRUE} then a 
+        raw vector is returned instead.
+}
 \description{
 Calculate the hash of a file
+}
+\examples{
+filename <- system.file('DESCRIPTION', package = 'base', mustWork = TRUE)
+xxhash_file(filename)
 }

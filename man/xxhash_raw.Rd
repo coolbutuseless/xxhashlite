@@ -16,6 +16,16 @@ Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
 \item{as_raw}{Return the hash as a raw vector of bytes instead of string?
 Default: FALSE}
 }
+\value{
+String representation of hash. If \code{as_raw = TRUE} then a 
+        raw vector is returned instead.
+}
 \description{
-Calculate the hash of a raw vector or string
+This performs a hash of the raw bytes - not of the serialized representation.
+}
+\examples{
+vec <- "hello"
+xxhash_raw(vec)
+vec <- as.raw(c(0x01, 0x02, 0x99))
+xxhash_raw(vec)
 }
