@@ -14,7 +14,8 @@ xxhash(robj, algo = "xxh128", as_raw = FALSE)
 Valid values: 'xxh32', 'xxh64', 'xxh128', 'xxh3'}
 
 \item{as_raw}{Return the hash as a raw vector of bytes instead of string?
-Default: FALSE}
+Default: FALSE.  If TRUE, then the raw bytes are returned in big-endian
+order - which is what \code{xxHash} considers the \emph{canonical} form.}
 }
 \value{
 String representation of hash. If \code{as_raw = TRUE} then a 
