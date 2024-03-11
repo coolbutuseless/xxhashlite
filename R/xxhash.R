@@ -69,6 +69,6 @@ xxhash_raw <- function(vec, algo = 'xxh128', as_raw = FALSE) {
 #' xxhash_file(filename)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 xxhash_file <- function(file, algo = 'xxh128', as_raw = FALSE) {
-  .Call(xxhash_file_, file, algo, as_raw)
+  .Call(xxhash_file_, normalizePath(file), algo, as_raw)
 }
 
