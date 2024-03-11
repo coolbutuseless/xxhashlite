@@ -79,6 +79,29 @@ mtcars$cyl[1] <- 0
 xxhash(mtcars)
 ```
 
+## Available algorithms 
+`{xxhashlite}` supports returning the hash as a raw vector, and all the
+xxHash algorithms are available:
+
+```{r}
+xxhash(mtcars, as_raw = TRUE)
+xxhash(mtcars, algo = 'xxh3')
+xxhash(mtcars, algo = 'xxh64')
+xxhash(mtcars, algo = 'xxh32')
+```
+
+## Strings and Raw Vectors
+
+`xxhash()` uses R's serialization mechanism to handle any R object.
+
+When you only require a hash of the raw contents of a file, a raw vector
+or a string, then use `xxhash_raw()` and `xxhash_file()`.
+
+Rather than serializing the data first, the hash is calculated on the raw
+bytes.
+
+
+
 
 ## Acknowledgements
 
