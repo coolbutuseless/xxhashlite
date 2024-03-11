@@ -26,16 +26,12 @@ library(xxhashlite)
 [![R-CMD-check](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-`xxhashlite` provides simple access to the *extremely* fast hashing functions
+`xxhashlite` provides access to the *extremely* fast hashing functions
 in [xxHash](https://cyan4973.github.io/xxHash/) for in-memory hashing 
-of R objects.
-
-This new version of `xxhashlite` (v0.2.0) is a major update which now offers fast
-hashing of *any* R object by internally leveraging R's serialization capabilities.
+of R objects, files, strings and raw vectors.
 
 This package is a wrapper around [xxHash v0.8.2](https://github.com/Cyan4973/xxHash).  
-See `inst/LICENSE-xxHash`
-for the copyright and licensing information for that code.  
+See `inst/LICENSE-xxHash` for the copyright and licensing information for that code.  
 
 
 ## Notes
@@ -46,11 +42,15 @@ for the copyright and licensing information for that code.
 
 ## What's in the box
 
-* `xxhash(robj, algo)` calculates the hash of any R object understood by 
+* `xxhash(robj, algo, as_raw)` calculates the hash of any R object understood by 
 `base::serialize()`.
-* `xxhash_raw(vec, algo)` calculates the hash of a raw vector or string. 
-  This function is appropriate when comparing hashes of non-R objects.
-* `xxhash_file(file, algo)` calculates the hash of a file
+* `xxhash_raw(vec, algo, as_raw)` calculates the hash of a raw vector or string. 
+  This function is appropriate when comparing hashes of non-R objects e.g. 
+  a checksum hash of raw bytes.
+* `xxhash_file(file, algo, as_raw)` calculates the hash of a file
+
+Supports all hashes provided by `xxHash` i.e. XXH128, XXH3, XXH32 and XXH64.
+
 
 ## Installation
 
@@ -66,8 +66,8 @@ remotes::install_github('coolbutuseless/xxhashlite)
 
 A hash is a way of succinctly summarising the contents of an object in a compact format.
 
-If there  are changes to the object (no matter how small) then the hash should change as 
-well.
+If there  are changes to the object (no matter how small) then the hash should 
+see drastic changes.
 
 
 ```{r}
@@ -79,102 +79,6 @@ mtcars$cyl[1] <- 0
 xxhash(mtcars)
 ```
 
-
-
-## Timing for hashing arbitrary R objects
-
-`xxhashlite` uses the [xxHash](https://github.com/Cyan4973/xxHash) family 
-of hash functions to provide very fast hashing of R objects.
-
-For the test case shown below, `xxhashlite` is faster at calculating a hash 
-than all other methods I could find, with a maximum hashing speed in this
-specific case of 20 GB/s.
-
-Note: actual hashing speed will still depend on R's serialization functions 
-e.g. small complex data.frames might have a lot of serialization overhead compared
-to long numeric vectors.
-
-
-<details>
-<summary> Click to show/hide the benchmarking code </summary>
-
-```{r bench1}
-library(xxhashlite)
-library(digest)
-library(fastdigest)
-library(rlang)
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# Simple data.frame
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-N   <- 5e6
-df  <- data.frame(
-  x = runif(N),
-  y = sample(N)
-)
-
-size <- pryr::object_size(df)
-size
-
-
-res <- bench::mark(
-  # {xxhashlite}
-  hash(df),
-  
-  xxhash(df, 'xxh32'),
-  xxhash(df, 'xxh64'),
-  xxhash(df, 'xxh128'),
-  xxhash(df, 'xxh3'),
-  
-  # {digest}
-  digest(df, algo = 'xxhash32'),
-  digest(df, algo = 'xxhash64'),
-  digest(df, algo = 'murmur32'),
-  digest(df, algo = 'spookyhash'),
-  
-  # {fastdigest}
-  fastdigest(df),
-  
-  check = FALSE
-)
-```
-
-</details>
-
-
-```{r echo = FALSE}
-res %>% 
-  mutate(`MB/s` = round(size/1024^2 / as.numeric(median), 1)) %>%
-  mutate(`itr/sec` = round(`itr/sec`)) %>%
-  select(expression, median, `itr/sec`, `MB/s`) %>%
-  mutate(package = c(
-    rep('rlang::hash',  1),
-    rep('xxhashlite'            ,  4),
-    rep('digest'                ,  4),
-    rep('fastdigest'            ,  1)
-  )) %>%
-  select(package, everything()) %>%
-  knitr::kable(caption = "Hashing a simple data.frame")
-```
-
-
-```{r echo = FALSE}
-plot(res) + 
-  theme_bw()
-```
-
-
-## Related Software
-
-* The original [xxHash](https://cyan4973.github.io/xxHash/) software.
-* The [`digest`](https://cran.r-project.org/package=digest) package is 
-  a much more comprehensive approach to hashing from within R - multiple 
-  hashing functions and much more configurability
-* The [`hashFunction`](https://cran.r-project.org/package=hashFunction) package offers 
-  some hasing functions that work directly on character or integer values.
-* The [`fastdigest`](https://cran.r-project.org/package=fastdigest) offers
-  the fast non-cryptographic 'SpookyHash' and will hash anything that
-  serialize knows about.
 
 ## Acknowledgements
 

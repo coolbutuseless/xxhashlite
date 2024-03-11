@@ -1,13 +1,11 @@
 
 
-# xxhashlite 0.2.1.9001  2024-03-10
+# xxhashlite 0.2.2  2024-03-11
 
-* Rename hash option to better align with official documentation
-* Remove option to set seeds
-* Remove single byte callbacks for serialization. These are never used in binary
-  mode serialization.
+* Rename hash `algo` options to better align with official documentation
 * Skip serialization header so results for `algo = xxh128` match `rlang::hash()`
-* Hash files
+* Hash files, strings and raw vector contents directly (i.e. not using
+  serialization)
 * Return hash as string or raw vector
 
 # xxhashlite 0.2.1.9000  2024-03-09
