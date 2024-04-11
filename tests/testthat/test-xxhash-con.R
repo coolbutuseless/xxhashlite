@@ -1,5 +1,5 @@
 
-test_that("xxhash_file() works", {
+test_that("xxhash_con() works", {
   
   path <- testthat::test_path("ref")
   testfiles <- list.files(path, full.names = TRUE)
@@ -12,7 +12,7 @@ test_that("xxhash_file() works", {
     for (algo in algos){
       expect_identical(
         xxhash_raw(readBin(testfile, raw(), file.size(testfile)), algo = algo),
-        xxhash_file(testfile, algo = algo),
+        xxhash_con(file(testfile), algo = algo),
         label = paste(algo, testfile, ":")
       )
     }

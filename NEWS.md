@@ -1,5 +1,9 @@
 
 
+# xxhashlite 0.2.2.9000  2024-04-11
+
+* Support for hashing data from connections
+
 # xxhashlite 0.2.2  2024-03-11
 
 * Rename hash `algo` options to better align with official documentation

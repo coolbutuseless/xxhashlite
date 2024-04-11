@@ -5,11 +5,10 @@
 
 
 #define XXH_STATIC_LINKING_ONLY   /* access advanced declarations */
-#define XXH_IMPLEMENTATION   /* access definitions */
+#define XXH_IMPLEMENTATION        /* access definitions */
 
 #include "xxhash.h"
 #include "R-xxhash-utils.h"
-#include <inttypes.h> // PRIx64
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -28,13 +27,13 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP as_raw_) {
     len = (size_t)length(robj_);
   } else if (TYPEOF(robj_) == STRSXP) {
     if (length(robj_) != 1) {
-      error("xxhash_raw() character arguments must only be length-1");
+      error("xxhash_raw_(): Only single string expected");
     }
     tmp = (char *)CHAR(STRING_ELT(robj_, 0));
     src = (void *)tmp;
     len = strlen(tmp);
   } else {
-    error("xxhash_raw_(): only raw vectors and strings are supported");
+    error("xxhash_raw_(): Only raw vectors and strings are supported");
   }
   
   SEXP res_ = R_NilValue;
@@ -55,7 +54,7 @@ SEXP xxhash_raw_(SEXP robj_, SEXP algo_, SEXP as_raw_) {
     XXH64_hash_t const hash = XXH64(src, len, 0);
     res_ = PROTECT(xxh64_hash_to_robj(hash, as_raw_));
   } else {
-    error("Nope: algo = %s\n", algo);
+    error("xxhash_raw_(): Unknown algo '%s'\n", algo);
   }
   
   UNPROTECT(1);

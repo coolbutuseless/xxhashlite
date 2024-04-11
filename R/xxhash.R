@@ -72,3 +72,28 @@ xxhash_file <- function(file, algo = 'xxh128', as_raw = FALSE) {
   .Call(xxhash_file_, normalizePath(file), algo, as_raw)
 }
 
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' Calculate the hash of data from a connection object
+#' 
+#' @inheritParams xxhash_raw
+#' @param con connection
+#' 
+#' @return String representation of hash. If \code{as_raw = TRUE} then a 
+#'         raw vector is returned instead.
+#'         
+#' @export
+#'
+#' @examples
+#' filename <- system.file('DESCRIPTION', package = 'base', mustWork = TRUE)
+#' xxhash_con(file(filename))
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+xxhash_con <- function(con, algo = 'xxh128', as_raw = FALSE) {
+  stopifnot(inherits(con, "connection"))
+  if(!isOpen(con)){
+    on.exit(close(con)) 
+    open(con, "rb")
+  }
+  .Call(xxhash_con_, con, algo, as_raw)
+}

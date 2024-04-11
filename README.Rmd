@@ -48,13 +48,22 @@ See `inst/LICENSE-xxHash` for the copyright and licensing information for that c
   This function is appropriate when comparing hashes of non-R objects e.g. 
   a checksum hash of raw bytes.
 * `xxhash_file(file, algo, as_raw)` calculates the hash of a file
+* `xxhash_con(con, algo, as_raw)` calculations the hash of data from a connection
+  e.g. `gzfile()`, `url()`
 
 Supports all hashes provided by `xxHash` i.e. XXH128, XXH3, XXH32 and XXH64.
 
 
 ## Installation
 
-You can install from [GitHub](https://github.com/coolbutuseless/xxhashlite) with:
+`xxhashlite` can be installed from CRAN:
+
+``` r
+install.packages('xxhashlite')
+```
+
+
+You can install the development version from [GitHub](https://github.com/coolbutuseless/xxhashlite) with:
 
 ``` r
 # install.package('remotes')

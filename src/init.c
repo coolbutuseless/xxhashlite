@@ -5,6 +5,7 @@
 SEXP xxhash_     (SEXP robj_, SEXP algo_, SEXP as_raw_);
 SEXP xxhash_raw_ (SEXP robj_, SEXP algo_, SEXP as_raw_);
 SEXP xxhash_file_(SEXP file_, SEXP algo_, SEXP as_raw_);
+SEXP xxhash_con_ (SEXP con_ , SEXP algo_, SEXP as_raw_);
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // .C      R_CMethodDef
@@ -14,6 +15,7 @@ static const R_CallMethodDef CEntries[] = {
   {"xxhash_"     , (DL_FUNC) &xxhash_     , 3},
   {"xxhash_raw_" , (DL_FUNC) &xxhash_raw_ , 3},
   {"xxhash_file_", (DL_FUNC) &xxhash_file_, 3},
+  {"xxhash_con_" , (DL_FUNC) &xxhash_con_ , 3},
   {NULL, NULL, 0}
 };
 

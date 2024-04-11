@@ -3,7 +3,6 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <stdbool.h>
-#include <inttypes.h> // PRIx64
 
 #define XXH_STATIC_LINKING_ONLY   /* access advanced declarations */
 
@@ -22,7 +21,7 @@ typedef struct {
 // Hash a byte
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 void hash_byte(R_outpstream_t stream, int c) {
-  error("Single byte hashing should never be called during binary serialisation");
+  error("xxhash::hash_byte(): Single byte hashing should never be called during binary serialisation");
 }
 
 
@@ -51,7 +50,7 @@ void xxh3_128bits_hash_bytes(R_outpstream_t stream, void *src, int n) {
   
   XXH3_state_t *xxstate = (XXH3_state_t *)ser_state->xxstate;
   if (XXH3_128bits_update(xxstate, src, (size_t)n) == XXH_ERROR) {
-    error("hash_bytes: couldn't update state");
+    error("xxh3_128bits_hash_bytes(): Error updating state");
   }
 }
 
@@ -72,7 +71,7 @@ void xxh3_64bits_hash_bytes(R_outpstream_t stream, void *src, int n) {
   
   XXH3_state_t *xxstate = (XXH3_state_t *)ser_state->xxstate;
   if (XXH3_64bits_update(xxstate, src, (size_t)n) == XXH_ERROR) {
-    error("hash_bytes: couldn't update state");
+    error("xxh3_64bits_hash_bytes(): Error updating state");
   }
 }
 
@@ -93,7 +92,7 @@ void xxh32_hash_bytes(R_outpstream_t stream, void *src, int n) {
   
   XXH32_state_t *xxstate = (XXH32_state_t *)ser_state->xxstate;
   if (XXH32_update(xxstate, src, (size_t)n) == XXH_ERROR) {
-    error("hash_bytes: couldn't update state");
+    error("xxh32_hash_bytes(): Error updating state");
   }
 }
 
@@ -114,7 +113,7 @@ void xxh64_hash_bytes(R_outpstream_t stream, void *src, int n) {
   
   XXH64_state_t *xxstate = (XXH64_state_t *)ser_state->xxstate;
   if (XXH64_update(xxstate, src, (size_t)n) == XXH_ERROR) {
-    error("hash_bytes: couldn't update state");
+    error("xxh64_hash_bytes(): Error updating state");
   }
 }
 
@@ -158,11 +157,11 @@ SEXP xxhash_(SEXP robj_, SEXP algo_, SEXP as_raw_) {
     err = XXH64_reset(xxstate, 0);
     hash_bytes = (void *)xxh64_hash_bytes;
   } else {
-    error("Nope: algo = %s\n", algo);
+    error("xxhash_(): Unknown algo '%s'\n", algo);
   }
 
   if (err == XXH_ERROR) {
-    error("xxhash_(): Unknown algorithm '%s'", algo);
+    error("xxhash_(): Error initialising hashing state for '%s'", algo);
   }
 
 

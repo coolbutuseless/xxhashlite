@@ -8,6 +8,9 @@
 #include "xxhash.h"
 #include "R-xxhash-utils.h"
 
+
+#define FILEBUFSIZE 1 << 16
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // XXH128
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -15,10 +18,10 @@ SEXP xxhash_file_xxh128(FILE *f, SEXP as_raw_) {
   
   XXH3_state_t* state = XXH3_createState();
   XXH3_128bits_reset(state);
-  char buffer[4096];
+  char buffer[FILEBUFSIZE];
   size_t count;
   
-  while ((count = fread(buffer, 1, sizeof(buffer), f)) != 0) {
+  while ((count = fread(buffer, 1, FILEBUFSIZE, f)) != 0) {
     XXH3_128bits_update(state, buffer, count);
   }
   
@@ -37,10 +40,10 @@ SEXP xxhash_file_xxh3(FILE *f, SEXP as_raw_) {
   
   XXH3_state_t* state = XXH3_createState();
   XXH3_64bits_reset(state);
-  char buffer[4096];
+  char buffer[FILEBUFSIZE];
   size_t count;
   
-  while ((count = fread(buffer, 1, sizeof(buffer), f)) != 0) {
+  while ((count = fread(buffer, 1, FILEBUFSIZE, f)) != 0) {
     XXH3_64bits_update(state, buffer, count);
   }
   
@@ -60,10 +63,10 @@ SEXP xxhash_file_xxh32(FILE *f, SEXP as_raw_) {
   XXH32_state_t *state = XXH32_createState();
   XXH32_reset(state, 0);
   
-  char buffer[4096];
+  char buffer[FILEBUFSIZE];
   size_t count;
   
-  while ((count = fread(buffer, 1, sizeof(buffer), f)) != 0) {
+  while ((count = fread(buffer, 1, FILEBUFSIZE, f)) != 0) {
     XXH32_update(state, buffer, count);
   }
   
@@ -82,10 +85,10 @@ SEXP xxhash_file_xxh64(FILE *f, SEXP as_raw_) {
   XXH64_state_t *state = XXH64_createState();
   XXH64_reset(state, 0);
   
-  char buffer[4096];
+  char buffer[FILEBUFSIZE];
   size_t count;
   
-  while ((count = fread(buffer, 1, sizeof(buffer), f)) != 0) {
+  while ((count = fread(buffer, 1, FILEBUFSIZE, f)) != 0) {
     XXH64_update(state, buffer, count);
   }
   
@@ -119,7 +122,9 @@ SEXP xxhash_file_(SEXP file_, SEXP algo_, SEXP as_raw_) {
     res_ = PROTECT(xxhash_file_xxh32(f, as_raw_));
   } else if (strcmp(algo, "xxh64") == 0) {
     res_ = PROTECT(xxhash_file_xxh64(f, as_raw_));
-  } 
+  } else {
+    error("xxhash_raw_(): Unknown algo '%s'\n", algo);
+  }
   
   fclose(f);
   UNPROTECT(1);
