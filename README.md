@@ -7,6 +7,7 @@
 
 ![](https://img.shields.io/badge/cool-useless-green.svg)
 [![R-CMD-check](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/coolbutuseless/xxhashlite/actions/workflows/R-CMD-check.yaml)
+[![CRAN](https://www.r-pkg.org/badges/version/xxhashlite)](https://CRAN.R-project.org/package=xxhashlite)
 <!-- badges: end -->
 
 `xxhashlite` provides access to the *extremely* fast hashing functions
@@ -40,18 +41,25 @@ XXH64.
 
 ## Installation
 
-`xxhashlite` can be installed from CRAN:
+This package can be installed from CRAN
 
 ``` r
 install.packages('xxhashlite')
 ```
 
-You can install the development version from
+You can install the latest development version from
 [GitHub](https://github.com/coolbutuseless/xxhashlite) with:
 
 ``` r
 # install.package('remotes')
-remotes::install_github('coolbutuseless/xxhashlite)
+remotes::install_github('coolbutuseless/xxhashlite')
+```
+
+Pre-built source/binary versions can also be installed from
+[R-universe](https://r-universe.dev)
+
+``` r
+install.packages('xxhashlite', repos = c('https://coolbutuseless.r-universe.dev', 'https://cloud.r-project.org'))
 ```
 
 ## Why use a hash?
